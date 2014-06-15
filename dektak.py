@@ -205,29 +205,29 @@ y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usec
 coefficients = np.polyfit(x, y, 1)
 polynomial = np.poly1d(coefficients)
 ys = polynomial(x)
-print coefficients
 print polynomial
 
 yLevelled=y-ys          #levelled line scan
 
 
-plt.figure('Full data after levelling')
-plt.plot(x,yLevelled)
-plt.title('Data after levelling')
+plt.figure('Full data after levelling and averaging')
+plt.plot(x,yLevelled, 'ro', markersize=2,label='Raw data')
+plt.title('Full data after levelling and averaging')
 plt.xlabel('Lateral [um]')
 plt.ylabel('Raw Micrometer [um]')
 plt.grid(True)
 
 ###############################################################################
-##calculate moving averageof the levelled data
+##calculate moving average of the levelled data
 
+movingAverageSize = 177
 y=yLevelled
-y=scipy.medfilt(yLevelled,177)
+y=scipy.medfilt(yLevelled,movingAverageSize)
 
-plt.plot(x,yLevelled)
-plt.title('Data after levelling')
+plt.plot(x,y,label='Moving average')
 plt.xlabel('Lateral [um]')
 plt.ylabel('Raw Micrometer [um]')
+plt.legend()
 plt.grid(True)
 
 
@@ -296,7 +296,7 @@ stop = 2500
 #threshold=-0.05
 
 
-
+plt.figure('rest Data after levelling')
 
 
 
