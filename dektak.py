@@ -197,9 +197,7 @@ def FindThresholdLine(x,y,threshold):
 ###############################################################################
 ##load data from the file
 
-x=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(0,))
-y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(1,))
-
+x, y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(0,1), unpack=True)
 
 ##############################################################################
 ##levelling of the surface tilt
