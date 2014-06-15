@@ -128,7 +128,7 @@ def FindThresholdLine(x,y,threshold):
     for i in xrange(0, len(y)):
         if i < (len(y)-1):
             if y[i]<threshold and y[i+1]>threshold: #incerasing
-                print "Increasing line detected"
+                #print "Increasing line detected"
                 x0 = x[i]
                 y0 = y[i]
                 x1 = x[i+1]
@@ -142,7 +142,7 @@ def FindThresholdLine(x,y,threshold):
                 
             else:
                 if y[i]>threshold and y[i+1]<threshold: #decreasing
-                    print "Decreasing line detected"
+                    #print "Decreasing line detected"
                     x0 = xDiff[i]
                     y0 = y[i]
                     x1 = xDiff[i+1]
@@ -205,7 +205,8 @@ x, y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),u
 coefficients = np.polyfit(x, y, 1)
 polynomial = np.poly1d(coefficients)
 ys = polynomial(x)
-print polynomial
+
+print 'Fitted line equation f(x) =', polynomial
 
 yLevelled=y-ys          #levelled line scan
 
@@ -273,6 +274,12 @@ plt.ylabel("Phase [deg]")
 plt.tight_layout()      #removes the overlapping of the labels in subplots
 plt.xlim(0,dataLenghtFFT+1)
 plt.grid(True)
+
+averageStructureHeight = amplitudeScaledFFT.max()
+maxHarmonic = np.where(amplitudeScaledFFT==amplitudeScaledFFT.max())[0][0]
+
+print 'Average structures height:', averageStructureHeight*2 #averageStructureHeight is amplitude
+print 'Number of structures:', maxHarmonic-1
 
 ###############################################################################
 ##calculate first order difference along the averaged levelled data
