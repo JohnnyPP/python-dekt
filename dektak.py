@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as scipy
 import sys
+import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
 filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
@@ -26,7 +27,7 @@ filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 
 def FindHeaderLength():
     """
-    Finds the positionon the 'Scan Data' and adds additional 2 lines
+    Finds the positionon the 'Scan Data' and adds additional 4 lines
     to give as a result the lenght of the header in number of lines.
     This is then used in csv function
     """
@@ -230,6 +231,51 @@ plt.ylabel('Raw Micrometer [um]')
 plt.legend()
 plt.grid(True)
 
+##############################################################################
+##FFT amplitude and phase plot of the raw data after moving average
+
+dataLenghtFFT = len(yLevelMovingAverage)/2        #divide by 2 to satify rfft
+                    # scale by the number of points so that
+                    # the magnitude does not depend on the length 
+                    # of the signal or on its sampling frequency 
+
+calculatedFFT = np.fft.rfft(yLevelMovingAverage) 
+
+amplitudeFFT = np.abs(calculatedFFT)    #calculates FFT amplitude from 
+                                        #complex calculatedFFT output
+phaseFFT = np.angle(calculatedFFT)      #calculates FFT phase from 
+                                        #complex calculatedFFT output
+phaseDegreesFFT = np.rad2deg(phaseFFT)  #convert to degrees
+amplitudeScaledFFT = amplitudeFFT/float(dataLenghtFFT)
+                 # scale by the number of points so that
+                 # the magnitude does not depend on the length 
+                 # of the signal
+amplitudeScaledRMSFFT = amplitudeFFT/float(dataLenghtFFT)/math.sqrt(2)
+# Scaling to Root mean square amplitude (dataLenghtFFT/sqrt{2}),
+
+
+xFFT = np.linspace(0,dataLenghtFFT+1,dataLenghtFFT+1)   
+                                #the range is two times smaller +1 for RFFT
+                                #sinus signal without noise used for fit
+
+plt.figure("FFT amplitude and phase harmonics")
+plt.subplot(2,1,1)
+plt.vlines(xFFT,0,amplitudeScaledFFT)
+plt.title("FFT amplitude harmonics")
+plt.xlabel("Harmonics")
+plt.ylabel("Amplitude [V]")
+plt.xlim(0,dataLenghtFFT/2+1) #adjuts the x axis to maximum of numberOfPoints
+plt.grid(True)
+
+plt.subplot(2,1,2)
+plt.vlines(xFFT,0,phaseDegreesFFT)
+plt.title("FFT phase harmonics")
+plt.xlabel("Harmonics")
+plt.ylabel("Phase [deg]")
+plt.tight_layout()      #removes the overlapping of the labels in subplots
+plt.xlim(0,dataLenghtFFT+1)
+plt.grid(True)
+
 ###############################################################################
 ##calculate first order difference along the averaged levelled data
 
@@ -262,18 +308,6 @@ plt.xlabel('Lateral [um]')
 plt.ylabel('Raw Micrometer [um]')
 plt.legend()
 plt.grid(True)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

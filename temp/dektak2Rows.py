@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
-filename = '/home/kolan/mycode/python/dektak/t10_1_1_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/t10_1_7_normal.csv'
