@@ -123,7 +123,7 @@ def coefC(x0,y0,x1,y1):
     return (x1*y0-x0*y1)/(x1-x0)
 
 
-def FindThresholdLine(x,y,threshold):
+def FindThresholdLine(x,y,threshold, start):
     thresholdLineArray = np.array([0,1,threshold])
     for i in xrange(0, len(y)):
         if i < (len(y)-1):
@@ -174,7 +174,7 @@ def FindThresholdLine(x,y,threshold):
         pointX = float(detWx/detW)
         pointY = float(detWy/detW)
         incIntersectionPoints.append(np.array([pointX,pointY]))
-        #plt.plot(xDiff[i],incIntersectionPoints[i][1],'go')
+        #plt.plot(xDiff[i+start],incIntersectionPoints[i][1],'go')
         plt.plot(incIntersectionPoints[i][0],incIntersectionPoints[i][1],'go')
         
     for i in xrange(0, decLineEquationCoefficients.__len__()):
@@ -188,7 +188,8 @@ def FindThresholdLine(x,y,threshold):
         decpointX = float(decdetWx/decdetW)
         decpointY = float(decdetWy/decdetW)
         decIntersectionPoints.append(np.array([decpointX,decpointY]))
-        #plt.plot(xDiff[i],decIntersectionPoints[i][1],'ro')
+        #plt.plot(xDiff[i+start],decIntersectionPoints[i][1],'ro')
+        #plt.plot(decIntersectionPoints[i][0]+x[start]/2,decIntersectionPoints[i][1],'ro')
         plt.plot(decIntersectionPoints[i][0],decIntersectionPoints[i][1],'ro')
     return incIntersectionPoints, decIntersectionPoints
 
@@ -342,13 +343,18 @@ print 'Mean distance between structures from minima', mintabDiff.mean()
 ##############################################################################
 ##Slicing
 
+increaseSliceLength = 200       #this is in index
 
 indexOfMaxOccurrence = np.where(x>maxtab[0][0])
 indexOfMinOccurrence = np.where(x>mintab[0][0])
 
-start = indexOfMaxOccurrence[0][0] - 400
-stop = indexOfMinOccurrence[0][0] + 400
+start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+#start = 0
+stop = indexOfMinOccurrence[0][0] + increaseSliceLength
 
+
+#the question is should the slices move along x or should they start always from 0
+#shift the x array to 0
 #start = 2500
 #stop = 4500
 
@@ -393,8 +399,7 @@ stop = indexOfMinOccurrence[0][0] + 400
 #threshold=-0.05
 
 
-plt.figure('rest Data after levelling')
-
+plt.figure('Sliced difference structure')
 
 
 
@@ -414,7 +419,130 @@ decIntersectionPoints = []
 top = []
 bottom = []
 
+thresholdStep = 0.001
+signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
+xIFFT = signalIFFT[:,0]
+yIFFT = signalIFFT[:,1]
 
+xShiftedToZero=xIFFT[start:stop]-xIFFT[start:stop][0]
+
+
+for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
+    #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
+    aincPositve, adecPositve = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold, start)    
+    if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
+        increasingPoints = []
+        incLineEquationCoefficients = []
+        incIntersectionPoints = []
+        decLineEquationCoefficients = []
+        decreasingPoints = []
+        decIntersectionPoints = []
+        aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold+thresholdStep, start)
+        break
+    increasingPoints = []
+    incLineEquationCoefficients = []
+    incIntersectionPoints = []
+    decLineEquationCoefficients = []
+    decreasingPoints = []
+    decIntersectionPoints = []
+
+increasingPoints = []
+incLineEquationCoefficients = []
+incIntersectionPoints = []
+decLineEquationCoefficients = []
+decreasingPoints = []
+decIntersectionPoints = []
+
+for threshold in reversed(np.arange(0, 0.15, 0.001)): 
+    aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
+    if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
+        increasingPoints = []
+        incLineEquationCoefficients = []
+        incIntersectionPoints = []
+        decLineEquationCoefficients = []
+        decreasingPoints = []
+        decIntersectionPoints = []
+        aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold-thresholdStep, start)
+        break 
+    increasingPoints = []
+    incLineEquationCoefficients = []
+    incIntersectionPoints = []
+    decLineEquationCoefficients = []
+    decreasingPoints = []
+    decIntersectionPoints = []
+
+#for i in xrange(0, adecPositve.__len__()):
+
+abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+#
+#for i in xrange(0, adecNegative.__len__()):
+atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+
+#plt.plot(xIFFT,yIFFT)
+
+
+plt.plot(xIFFT[start:stop],yIFFT[start:stop])
+#plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
+plt.grid(True)
+
+#yPointTop1 = yLevelled[adecPositveLast[0][0]]
+#yPointTop2 = yLevelled[adecNegativeLast[0][0]]
+#
+#yPointBottom1 = yLevelled[aincPositveLast[0][0]]
+#yPointBottom2 = yLevelled[aincNegativeLast[0][0]]
+
+iyTop1 = np.where(x>adecPositveLast[0][0])
+iyTop2 = np.where(x>adecNegativeLast[0][0])
+
+iyBottom1 = np.where(x>aincPositveLast[0][0])
+iyBottom2 = np.where(x>aincNegativeLast[0][0])
+
+xPointTop1 = iyTop1[0][0]
+xPointTop2 = iyTop2[0][0]
+
+xPointBottom1 = iyBottom1[0][0]
+xPointBottom2 = iyBottom2[0][0]
+
+yPointTop1 = yLevelled[xPointTop1]
+yPointTop2 = yLevelled[xPointTop2]
+yPointBottom1 = yLevelled[xPointBottom1]
+yPointBottom2 = yLevelled[xPointBottom2]
+
+xPointTop1 = adecPositveLast[0][0]
+xPointTop2 = adecNegativeLast[0][0]
+xPointBottom1 = aincPositveLast[0][0]
+xPointBottom2 = aincNegativeLast[0][0]
+
+xLineTop = []
+yLineTop = []
+xLineBottom = []
+yLineBottom = []
+
+xLineTop.append(xPointTop1)
+xLineTop.append(xPointTop2)
+yLineTop.append(yPointTop1)
+yLineTop.append(yPointTop2)
+
+xLineBottom.append(xPointBottom1)
+xLineBottom.append(xPointBottom2)
+yLineBottom.append(yPointBottom1)
+yLineBottom.append(yPointBottom2)
+
+plt.figure('Sliced structure')
+plt.plot(xPointTop1,yPointTop1,'bo')
+plt.plot(xPointTop2,yPointTop2,'bo')
+plt.plot(xLineTop,yLineTop)
+xShiftedToZero=x[start:stop]-x[start:stop][0]
+plt.plot(xShiftedToZero,yLevelled[start:stop])
+plt.plot(xPointBottom1,yPointBottom1,'ro')
+plt.plot(xPointBottom2,yPointBottom2,'ro')
+plt.plot(xLineBottom,yLineBottom)
+plt.title('Data after levelling')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.grid(True)
+
+plt.show()
     
 
 #thresholded = np.array(diffMA)
@@ -509,132 +637,3 @@ bottom = []
 
 #aincPositve, adecPositve = FindThresholdLine(xIFFT[:2500],yIFFT[:2500],0.019)
 
-thresholdStep = 0.001
-signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
-xIFFT = signalIFFT[:,0]
-yIFFT = signalIFFT[:,1]
-
-for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
-    aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold)
-    if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
-        increasingPoints = []
-        incLineEquationCoefficients = []
-        incIntersectionPoints = []
-        decLineEquationCoefficients = []
-        decreasingPoints = []
-        decIntersectionPoints = []
-        aincPositveLast, adecPositveLast = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold+thresholdStep)
-        break
-    increasingPoints = []
-    incLineEquationCoefficients = []
-    incIntersectionPoints = []
-    decLineEquationCoefficients = []
-    decreasingPoints = []
-    decIntersectionPoints = []
-
-increasingPoints = []
-incLineEquationCoefficients = []
-incIntersectionPoints = []
-decLineEquationCoefficients = []
-decreasingPoints = []
-decIntersectionPoints = []
-
-for threshold in reversed(np.arange(0, 0.15, 0.001)): 
-    aincNegative, adecNegative = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],-threshold)
-    if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
-        increasingPoints = []
-        incLineEquationCoefficients = []
-        incIntersectionPoints = []
-        decLineEquationCoefficients = []
-        decreasingPoints = []
-        decIntersectionPoints = []
-        aincNegativeLast, adecNegativeLast = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],-threshold-thresholdStep)
-        break 
-    increasingPoints = []
-    incLineEquationCoefficients = []
-    incIntersectionPoints = []
-    decLineEquationCoefficients = []
-    decreasingPoints = []
-    decIntersectionPoints = []
-
-#for i in xrange(0, adecPositve.__len__()):
-
-abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-#
-#for i in xrange(0, adecNegative.__len__()):
-atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
-
-#plt.plot(xIFFT,yIFFT)
-
-
-plt.plot(xIFFT[start:stop],yIFFT[start:stop])
-#plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
-plt.grid(True)
-
-#yPointTop1 = yLevelled[adecPositveLast[0][0]]
-#yPointTop2 = yLevelled[adecNegativeLast[0][0]]
-#
-#yPointBottom1 = yLevelled[aincPositveLast[0][0]]
-#yPointBottom2 = yLevelled[aincNegativeLast[0][0]]
-
-iyTop1 = np.where(x>adecPositveLast[0][0])
-iyTop2 = np.where(x>adecNegativeLast[0][0])
-
-iyBottom1 = np.where(x>aincPositveLast[0][0])
-iyBottom2 = np.where(x>aincNegativeLast[0][0])
-
-xPointTop1 = iyTop1[0][0]
-xPointTop2 = iyTop2[0][0]
-
-xPointBottom1 = iyBottom1[0][0]
-xPointBottom2 = iyBottom2[0][0]
-
-yPointTop1 = yLevelled[xPointTop1]
-yPointTop2 = yLevelled[xPointTop2]
-yPointBottom1 = yLevelled[xPointBottom1]
-yPointBottom2 = yLevelled[xPointBottom2]
-
-xPointTop1 = adecPositveLast[0][0]
-xPointTop2 = adecNegativeLast[0][0]
-xPointBottom1 = aincPositveLast[0][0]
-xPointBottom2 = aincNegativeLast[0][0]
-
-xLineTop = []
-yLineTop = []
-xLineBottom = []
-yLineBottom = []
-
-xLineTop.append(xPointTop1)
-xLineTop.append(xPointTop2)
-yLineTop.append(yPointTop1)
-yLineTop.append(yPointTop2)
-
-xLineBottom.append(xPointBottom1)
-xLineBottom.append(xPointBottom2)
-yLineBottom.append(yPointBottom1)
-yLineBottom.append(yPointBottom2)
-
-plt.figure('Data after levelling')
-plt.plot(xPointTop1,yPointTop1,'ro')
-plt.plot(xPointTop2,yPointTop2,'ro')
-plt.plot(xLineTop,yLineTop)
-plt.plot(x[start:stop],yLevelled[start:stop])
-plt.plot(xPointBottom1,yPointBottom1,'ro')
-plt.plot(xPointBottom2,yPointBottom2,'ro')
-plt.plot(xLineBottom,yLineBottom)
-plt.title('Data after levelling')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.grid(True)
-
-
-
-
-
-#plt.figure('Full xDiff Data after levelling')
-#plt.plot(xIFFT,yIFFT)
-#
-##plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
-#plt.grid(True)
-
-plt.show()
