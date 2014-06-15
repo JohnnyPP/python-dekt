@@ -194,6 +194,7 @@ def FindThresholdLine(x,y,threshold):
 
 ###############################################################################
 ###############################################################################
+##load data from the file
 
 x=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(0,))
 y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(1,))
@@ -221,10 +222,42 @@ plt.grid(True)
 ##calculate moving average of the levelled data
 
 movingAverageSize = 177
-y=yLevelled
-y=scipy.medfilt(yLevelled,movingAverageSize)
+yLevelMovingAverage=scipy.medfilt(yLevelled,movingAverageSize)
 
-plt.plot(x,y,label='Moving average')
+plt.plot(x,yLevelMovingAverage,label='Moving average')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.legend()
+plt.grid(True)
+
+###############################################################################
+##calculate first order difference along the averaged levelled data
+
+yDiff = np.diff(yLevelMovingAverage)
+dataLength = len(yLevelMovingAverage) 
+xDiff = np.delete(x,dataLength-1)   #diff consumes one last element from the array
+
+plt.figure('First order difference along the averaged levelled data')
+plt.plot(xDiff,yDiff,'ko', markersize=2, label='Raw data')
+#plt.plot(xDiff,yDiff)
+plt.title('First order difference along the averaged levelled data')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.grid(True)
+
+
+##############################################################################
+##FFT filtering of the averaged difference data
+
+FirstHarmonics=1800 #only first 'FirstHarmonics' will be left in the FFT data
+
+calculatedFFTFiltered = np.fft.rfft(yDiff) 
+calculatedFFTFiltered[FirstHarmonics:]=0    #any harmonics greater than 'FirstHarmonics' #are set to 0
+yCalculatedIFFTFiltered = np.fft.irfft(calculatedFFTFiltered) #caclulate IFFT from the filtered FFT
+
+
+plt.plot(xDiff,yCalculatedIFFTFiltered, label='FFT filtered data')
+plt.title('First order difference along the averaged levelled data')
 plt.xlabel('Lateral [um]')
 plt.ylabel('Raw Micrometer [um]')
 plt.legend()
@@ -237,15 +270,26 @@ plt.grid(True)
 
 
 
-dataLength = len(yLevelled) 
-xDiff = np.delete(x,dataLength-1)   #diff consumes one last element from the array
 
-#plt.figure('Derivative of y')
-d = np.diff(y)
-#plt.plot(xDiff,d,'ko', markersize=2)
-#plt.title('Derivative of y')
+
+
+
+
+
+
+
+#plt.figure('FFT filtering')
+#plt.plot(xDiff,calculatedIFFTFiltered) 
+
+#y=d
+y=yCalculatedIFFTFiltered
+
+#plt.figure('Thresholded')
+#plt.plot(y)
+#plt.plot(thresholdLine)
+#plt.title('Levelled data plot')
 #plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
+#plt.ylabel('Micrometer [um]')
 #plt.grid(True)
 
 
@@ -300,27 +344,7 @@ plt.figure('rest Data after levelling')
 
 
 
-##############################################################################
-##FFT filtering
-FirstHarmonics=1800
 
-calculatedFFT = np.fft.rfft(d) 
-calculatedFFTFiltered = calculatedFFT
-calculatedFFTFiltered[FirstHarmonics:]=0
-calculatedIFFTFiltered = np.fft.irfft(calculatedFFTFiltered)
-#plt.figure('FFT filtering')
-#plt.plot(xDiff,calculatedIFFTFiltered) 
-
-#y=d
-y=calculatedIFFTFiltered
-
-#plt.figure('Thresholded')
-#plt.plot(y)
-#plt.plot(thresholdLine)
-#plt.title('Levelled data plot')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Micrometer [um]')
-#plt.grid(True)
 
 #find the value of the xDiff for index comming from incIntersectionPoints[0]
 #and decIntersectionPoints[0]
@@ -387,10 +411,10 @@ bottom = []
 ##############################################################################
 ##IFFT plot
 
-maxtab, mintab = peakdet(calculatedIFFTFiltered,0.05, xDiff)
+maxtab, mintab = peakdet(yCalculatedIFFTFiltered,0.05, xDiff)
 
 
-signalIFFT = np.column_stack((xDiff,calculatedIFFTFiltered))
+signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
 xIFFT = signalIFFT[:,0]
 yIFFT = signalIFFT[:,1]
 #plt.plot(xIFFT,yIFFT)
