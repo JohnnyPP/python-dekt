@@ -239,7 +239,6 @@ dataLenghtFFT = len(yLevelMovingAverage)/2        #divide by 2 to satify rfft
                     # of the signal or on its sampling frequency 
 
 calculatedFFT = np.fft.rfft(yLevelMovingAverage) 
-
 amplitudeFFT = np.abs(calculatedFFT)    #calculates FFT amplitude from 
                                         #complex calculatedFFT output
 phaseFFT = np.angle(calculatedFFT)      #calculates FFT phase from 
@@ -276,10 +275,10 @@ plt.xlim(0,dataLenghtFFT+1)
 plt.grid(True)
 
 averageStructureHeight = amplitudeScaledFFT.max()
-maxHarmonic = np.where(amplitudeScaledFFT==amplitudeScaledFFT.max())[0][0]
+maxHarmonic = np.where(amplitudeScaledFFT==amplitudeScaledFFT.max())[0][0]-1
 
 print 'Average structures height:', averageStructureHeight*2 #averageStructureHeight is amplitude
-print 'Number of structures:', maxHarmonic-1
+print 'Number of structures:', maxHarmonic
 
 ###############################################################################
 ##calculate first order difference along the averaged levelled data
@@ -314,26 +313,41 @@ plt.ylabel('Raw Micrometer [um]')
 plt.legend()
 plt.grid(True)
 
+##############################################################################
+##find the maxima and minima in FFT filtered data
+peakThreshold = 0.07            #reliable results between 0.05 and 0.09
+maxtab, mintab = peakdet(yCalculatedIFFTFiltered, peakThreshold, xDiff)
+
+plt.plot(maxtab[:,0],maxtab[:,1],'o')
+plt.plot(mintab[:,0],mintab[:,1],'o')
+
+peakDetectMaxima = len(maxtab)
+peakDetectMinima = len(mintab)
+
+print 'Number of found maxima in first order difference data', peakDetectMaxima
+print 'Number of found minima in first order difference data', peakDetectMinima
+
+if peakDetectMaxima != peakDetectMinima:
+    print 'Not equal number of minima and maxima. Try to adjust peakThreshold parameter'
+if peakDetectMaxima != maxHarmonic and peakDetectMinima != maxHarmonic:
+    print 'Number of structures found by FFT not equals the number of minima \
+            and maxima found by peakdetect(). Try to adjust peakThreshold parameter'
+
+maxtabDiff = np.diff(maxtab,axis=0)[:,0]    #uses only 1st column
+mintabDiff = np.diff(mintab,axis=0)[:,0]    #uses only 1st column
+
+print 'Mean distance between structures from maxima', maxtabDiff.mean()
+print 'Mean distance between structures from minima', mintabDiff.mean()
+
+##############################################################################
+##Slicing
 
 
+indexOfMaxOccurrence = np.where(x>maxtab[0][0])
+indexOfMinOccurrence = np.where(x>mintab[0][0])
 
-#plt.figure('FFT filtering')
-#plt.plot(xDiff,calculatedIFFTFiltered) 
-
-#y=d
-y=yCalculatedIFFTFiltered
-
-#plt.figure('Thresholded')
-#plt.plot(y)
-#plt.plot(thresholdLine)
-#plt.title('Levelled data plot')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Micrometer [um]')
-#plt.grid(True)
-
-
-start = 0
-stop = 2500
+start = indexOfMaxOccurrence[0][0] - 400
+stop = indexOfMinOccurrence[0][0] + 400
 
 #start = 2500
 #stop = 4500
@@ -450,12 +464,7 @@ bottom = []
 ##############################################################################
 ##IFFT plot
 
-maxtab, mintab = peakdet(yCalculatedIFFTFiltered,0.05, xDiff)
 
-
-signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
-xIFFT = signalIFFT[:,0]
-yIFFT = signalIFFT[:,1]
 #plt.plot(xIFFT,yIFFT)
 
 ##############################################################################
@@ -501,7 +510,9 @@ yIFFT = signalIFFT[:,1]
 #aincPositve, adecPositve = FindThresholdLine(xIFFT[:2500],yIFFT[:2500],0.019)
 
 thresholdStep = 0.001
-
+signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
+xIFFT = signalIFFT[:,0]
+yIFFT = signalIFFT[:,1]
 
 for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
     aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold)
@@ -619,11 +630,11 @@ plt.grid(True)
 
 
 
-plt.figure('Full xDiff Data after levelling')
-plt.plot(xIFFT,yIFFT)
-plt.plot(maxtab[:,0],maxtab[:,1],'o')
-plt.plot(mintab[:,0],mintab[:,1],'o')
-#plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
-plt.grid(True)
+
+#plt.figure('Full xDiff Data after levelling')
+#plt.plot(xIFFT,yIFFT)
+#
+##plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
+#plt.grid(True)
 
 plt.show()
