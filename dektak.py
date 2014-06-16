@@ -344,9 +344,10 @@ print 'Mean distance between structures from minima', mintabDiff.mean()
 ##Slicing
 
 increaseSliceLength = 200       #this is in index
+sliceNumber = 17
 
-indexOfMaxOccurrence = np.where(x>maxtab[0][0])
-indexOfMinOccurrence = np.where(x>mintab[0][0])
+indexOfMaxOccurrence = np.where(x>maxtab[sliceNumber][0])
+indexOfMinOccurrence = np.where(x>mintab[sliceNumber][0])
 
 start = indexOfMaxOccurrence[0][0] - increaseSliceLength
 #start = 0
@@ -481,6 +482,7 @@ atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
 #plt.plot(xIFFT,yIFFT)
 
 
+#difference siganl
 plt.plot(xIFFT[start:stop],yIFFT[start:stop])
 #plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
 plt.grid(True)
@@ -491,11 +493,15 @@ plt.grid(True)
 #yPointBottom1 = yLevelled[aincPositveLast[0][0]]
 #yPointBottom2 = yLevelled[aincNegativeLast[0][0]]
 
-iyTop1 = np.where(x>adecPositveLast[0][0])
-iyTop2 = np.where(x>adecNegativeLast[0][0])
+#############################################################################
 
-iyBottom1 = np.where(x>aincPositveLast[0][0])
-iyBottom2 = np.where(x>aincNegativeLast[0][0])
+xShiftedToZero=x[start:stop]-x[start:stop][0]
+
+iyTop1 = np.where(xShiftedToZero>adecPositveLast[0][0])
+iyTop2 = np.where(xShiftedToZero>adecNegativeLast[0][0])
+
+iyBottom1 = np.where(xShiftedToZero>aincPositveLast[0][0])
+iyBottom2 = np.where(xShiftedToZero>aincNegativeLast[0][0])
 
 xPointTop1 = iyTop1[0][0]
 xPointTop2 = iyTop2[0][0]
@@ -503,10 +509,10 @@ xPointTop2 = iyTop2[0][0]
 xPointBottom1 = iyBottom1[0][0]
 xPointBottom2 = iyBottom2[0][0]
 
-yPointTop1 = yLevelled[xPointTop1]
-yPointTop2 = yLevelled[xPointTop2]
-yPointBottom1 = yLevelled[xPointBottom1]
-yPointBottom2 = yLevelled[xPointBottom2]
+yPointTop1 = yLevelled[start:stop][xPointTop1]
+yPointTop2 = yLevelled[start:stop][xPointTop2]
+yPointBottom1 = yLevelled[start:stop][xPointBottom1]
+yPointBottom2 = yLevelled[start:stop][xPointBottom2]
 
 xPointTop1 = adecPositveLast[0][0]
 xPointTop2 = adecNegativeLast[0][0]
@@ -544,6 +550,74 @@ plt.grid(True)
 
 plt.show()
     
+
+
+
+
+
+
+
+
+
+
+#############################################################################
+##points without shifting
+
+
+#
+#iyTop1 = np.where(x>adecPositveLast[0][0])
+#iyTop2 = np.where(x>adecNegativeLast[0][0])
+#
+#iyBottom1 = np.where(x>aincPositveLast[0][0])
+#iyBottom2 = np.where(x>aincNegativeLast[0][0])
+#
+#xPointTop1 = iyTop1[0][0]
+#xPointTop2 = iyTop2[0][0]
+#
+#xPointBottom1 = iyBottom1[0][0]
+#xPointBottom2 = iyBottom2[0][0]
+#
+#yPointTop1 = yLevelled[xPointTop1]
+#yPointTop2 = yLevelled[xPointTop2]
+#yPointBottom1 = yLevelled[xPointBottom1]
+#yPointBottom2 = yLevelled[xPointBottom2]
+#
+#xPointTop1 = adecPositveLast[0][0]
+#xPointTop2 = adecNegativeLast[0][0]
+#xPointBottom1 = aincPositveLast[0][0]
+#xPointBottom2 = aincNegativeLast[0][0]
+#
+#xLineTop = []
+#yLineTop = []
+#xLineBottom = []
+#yLineBottom = []
+#
+#xLineTop.append(xPointTop1)
+#xLineTop.append(xPointTop2)
+#yLineTop.append(yPointTop1)
+#yLineTop.append(yPointTop2)
+#
+#xLineBottom.append(xPointBottom1)
+#xLineBottom.append(xPointBottom2)
+#yLineBottom.append(yPointBottom1)
+#yLineBottom.append(yPointBottom2)
+#
+#plt.figure('Sliced structure')
+#plt.plot(xPointTop1,yPointTop1,'bo')
+#plt.plot(xPointTop2,yPointTop2,'bo')
+#plt.plot(xLineTop,yLineTop)
+#xShiftedToZero=x[start:stop]-x[start:stop][0]
+#plt.plot(xShiftedToZero,yLevelled[start:stop])
+#plt.plot(xPointBottom1,yPointBottom1,'ro')
+#plt.plot(xPointBottom2,yPointBottom2,'ro')
+#plt.plot(xLineBottom,yLineBottom)
+#plt.title('Data after levelling')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.grid(True)
+#
+#plt.show()
+#    
 
 #thresholded = np.array(diffMA)
 #x = np.where(thresholded == 0.05)[0]
