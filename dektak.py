@@ -350,66 +350,13 @@ indexOfMaxOccurrence = np.where(x>maxtab[sliceNumber][0])
 indexOfMinOccurrence = np.where(x>mintab[sliceNumber][0])
 
 start = indexOfMaxOccurrence[0][0] - increaseSliceLength
-#start = 0
 stop = indexOfMinOccurrence[0][0] + increaseSliceLength
 
-
-#the question is should the slices move along x or should they start always from 0
-#shift the x array to 0
-#start = 2500
-#stop = 4500
-
-#start = 4500
-#stop = 6500
-
-#start = 6500
-#stop = 8500
-#
-#start = 8500
-#stop = 10500
-
-
-
-#
-##plt.figure('Data after median')
-#plt.plot(x, scipy.medfilt(yLevelled,177))
-#plt.title('Data after median')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-
-
-###FFT and IFFT of the raw signall
-#FirstHarmonicsRaw=500
-#
-#calculatedFFTRaw = np.fft.rfft(yLevelled) 
-#calculatedFFTFilteredRaw = calculatedFFTRaw
-#calculatedFFTFilteredRaw[FirstHarmonicsRaw:]=0
-#calculatedIFFTFilteredRaw = np.fft.irfft(calculatedFFTFilteredRaw)
-#
-#plt.figure('Raw Data after FFT filtering')
-#plt.plot(calculatedIFFTFilteredRaw)
-#plt.title('Raw Data after FFT filtering')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-
-##############################################################################
-##THRESHOLD
-##############################################################################
-#threshold=-0.05
 
 
 plt.figure('Sliced difference structure')
 
 
-
-
-#find the value of the xDiff for index comming from incIntersectionPoints[0]
-#and decIntersectionPoints[0]
-
-
-#thresholdLineArray = np.array([0,1,threshold])
 
 increasingPoints = []
 incLineEquationCoefficients = []
@@ -472,28 +419,16 @@ for threshold in reversed(np.arange(0, 0.15, 0.001)):
     decreasingPoints = []
     decIntersectionPoints = []
 
-#for i in xrange(0, adecPositve.__len__()):
-
 abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-#
-#for i in xrange(0, adecNegative.__len__()):
 atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
 
-#plt.plot(xIFFT,yIFFT)
-
-
-#difference siganl
+#difference signal
 plt.plot(xIFFT[start:stop],yIFFT[start:stop])
 #plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
 plt.grid(True)
 
-#yPointTop1 = yLevelled[adecPositveLast[0][0]]
-#yPointTop2 = yLevelled[adecNegativeLast[0][0]]
-#
-#yPointBottom1 = yLevelled[aincPositveLast[0][0]]
-#yPointBottom2 = yLevelled[aincNegativeLast[0][0]]
-
-#############################################################################
+##############################################################################
+##Translate the points found in Diff data to the xy data
 
 xShiftedToZero=x[start:stop]-x[start:stop][0]
 
@@ -550,14 +485,6 @@ plt.grid(True)
 
 plt.show()
     
-
-
-
-
-
-
-
-
 
 
 #############################################################################
@@ -710,4 +637,51 @@ plt.show()
 
 
 #aincPositve, adecPositve = FindThresholdLine(xIFFT[:2500],yIFFT[:2500],0.019)
+
+
+#the question is should the slices move along x or should they start always from 0
+#shift the x array to 0
+#start = 2500
+#stop = 4500
+
+#start = 4500
+#stop = 6500
+
+#start = 6500
+#stop = 8500
+#
+#start = 8500
+#stop = 10500
+
+
+
+#
+##plt.figure('Data after median')
+#plt.plot(x, scipy.medfilt(yLevelled,177))
+#plt.title('Data after median')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.grid(True)
+
+
+###FFT and IFFT of the raw signall
+#FirstHarmonicsRaw=500
+#
+#calculatedFFTRaw = np.fft.rfft(yLevelled) 
+#calculatedFFTFilteredRaw = calculatedFFTRaw
+#calculatedFFTFilteredRaw[FirstHarmonicsRaw:]=0
+#calculatedIFFTFilteredRaw = np.fft.irfft(calculatedFFTFilteredRaw)
+#
+#plt.figure('Raw Data after FFT filtering')
+#plt.plot(calculatedIFFTFilteredRaw)
+#plt.title('Raw Data after FFT filtering')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.grid(True)
+
+##############################################################################
+##THRESHOLD
+##############################################################################
+#threshold=-0.05
+
 
