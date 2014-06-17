@@ -9,8 +9,8 @@ filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good    
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_12_normal.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_normal.csv'   #
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_12_normal.csv' #abottom IndexError: list index out of range
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_normal.csv'  #abottom IndexError: list index out of range
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_21_normal.csv'   #no top & bottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_24_normal.csv'  #no top & bottom
@@ -349,9 +349,9 @@ increaseSliceLength = 200       #this is in index
 #sliceNumber = 17
 
 fig, axs = plt.subplots(5,4, figsize=(15, 6), facecolor='w', edgecolor='k')
-fig.subplots_adjust(hspace = .5, wspace=.001)
-
+fig.subplots_adjust(hspace = .5, wspace=.2)
 axs = axs.ravel()
+plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
 for sliceNumber in range(20):
 
@@ -471,12 +471,7 @@ for sliceNumber in range(20):
     xLineBottom.append(xPointBottom2)
     yLineBottom.append(yPointBottom1)
     yLineBottom.append(yPointBottom2)
-    
-    
-    #axs[sliceNumber].plot(0,0)
-     
-    
-    plt.figure('Sliced structure')
+
     axs[sliceNumber].plot(xPointTop1,yPointTop1,'bo')
     axs[sliceNumber].plot(xPointTop2,yPointTop2,'bo')
     axs[sliceNumber].plot(xLineTop,yLineTop)
@@ -492,19 +487,19 @@ for sliceNumber in range(20):
     axs[sliceNumber].set_title(str(sliceNumber))   
 
 
-plt.figure('Sliced structure')
-plt.plot(xPointTop1,yPointTop1,'bo')
-plt.plot(xPointTop2,yPointTop2,'bo')
-plt.plot(xLineTop,yLineTop)
-xShiftedToZero=x[start:stop]-x[start:stop][0]
-plt.plot(xShiftedToZero,yLevelled[start:stop])
-plt.plot(xPointBottom1,yPointBottom1,'ro')
-plt.plot(xPointBottom2,yPointBottom2,'ro')
-plt.plot(xLineBottom,yLineBottom)
-plt.title('Data after levelling')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.grid(True)
+#plt.figure('Sliced structure')
+#plt.plot(xPointTop1,yPointTop1,'bo')
+#plt.plot(xPointTop2,yPointTop2,'bo')
+#plt.plot(xLineTop,yLineTop)
+#xShiftedToZero=x[start:stop]-x[start:stop][0]
+#plt.plot(xShiftedToZero,yLevelled[start:stop])
+#plt.plot(xPointBottom1,yPointBottom1,'ro')
+#plt.plot(xPointBottom2,yPointBottom2,'ro')
+#plt.plot(xLineBottom,yLineBottom)
+#plt.title('Data after levelling')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.grid(True)
 plt.show()
     
 
