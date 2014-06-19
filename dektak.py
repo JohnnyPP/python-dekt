@@ -16,7 +16,7 @@ filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_24_normal.csv'  #no top & bottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_parallel.csv'  #no top & bottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_parallel.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_parallel.csv'  #0.035 too low 0.04 ok
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_parallel.csv'  #0.035 too low 0.04 ok BADabottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_24_parallel.csv' #first peak very good 
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_3_normal.csv'
@@ -203,10 +203,18 @@ def FindThresholdLine(x,y,threshold, start):
 
 x, y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(0,1), unpack=True)
 
+plt.figure('Full raw data')
+plt.plot(x,y)
+plt.title('Full raw data')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.grid(True)
+#plt.show()
+
 ##############################################################################
 ##levelling of the surface tilt
 
-coefficients = np.polyfit(x, y, 1)
+coefficients = np.polyfit(x, y, 2)
 polynomial = np.poly1d(coefficients)
 ys = polynomial(x)
 
@@ -225,7 +233,7 @@ plt.grid(True)
 ###############################################################################
 ##calculate moving average of the levelled data
 
-movingAverageSize = 177
+movingAverageSize = 277
 yLevelMovingAverage=scipy.medfilt(yLevelled,movingAverageSize)
 
 plt.plot(x,yLevelMovingAverage,label='Moving average')
@@ -281,8 +289,8 @@ plt.grid(True)
 averageStructureHeight = amplitudeScaledFFT.max()
 maxHarmonic = np.where(amplitudeScaledFFT==amplitudeScaledFFT.max())[0][0]-1
 
-print 'Average structures height:', averageStructureHeight*2 #averageStructureHeight is amplitude
-print 'Number of structures:', maxHarmonic
+print 'Average structures height calculated using FFT:', averageStructureHeight*2, 'um' #averageStructureHeight is amplitude
+print 'Number of structures calculated using FFT:', maxHarmonic
 
 ###############################################################################
 ##calculate first order difference along the averaged levelled data
@@ -316,10 +324,11 @@ plt.xlabel('Lateral [um]')
 plt.ylabel('Raw Micrometer [um]')
 plt.legend()
 plt.grid(True)
+#plt.show()
 
 ##############################################################################
 ##find the maxima and minima in FFT filtered data
-peakThreshold = 0.07            #reliable results between 0.05 and 0.09
+peakThreshold = 0.065           #reliable results between 0.05 and 0.09
 maxtab, mintab = peakdet(yCalculatedIFFTFiltered, peakThreshold, xDiff)
 
 plt.plot(maxtab[:,0],maxtab[:,1],'o')
@@ -347,6 +356,9 @@ print 'Mean distance between structures from minima', mintabDiff.mean()
 ##Slicing
 increaseSliceLength = 200       #this is in index
 #sliceNumber = 17
+
+widthTop = []
+widthBottom = []
 
 fig, axs = plt.subplots(5,4, figsize=(15, 6), facecolor='w', edgecolor='k')
 fig.subplots_adjust(hspace = .5, wspace=.2)
@@ -425,6 +437,9 @@ for sliceNumber in range(20):
     abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
     atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
     
+    widthBottom.append(abottom)
+    widthTop.append(atop)
+    
     #difference signal
     #plt.plot(xIFFT[start:stop],yIFFT[start:stop])
     #plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
@@ -500,6 +515,12 @@ for sliceNumber in range(20):
 #plt.xlabel('Lateral [um]')
 #plt.ylabel('Raw Micrometer [um]')
 #plt.grid(True)
+npWidthTop = np.array(widthTop)
+npwidthBottom = np.array(widthBottom)
+
+print 'Mean top widht:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+print 'Mean bottom widht: ', np.mean(npwidthBottom), '+/-', np.std(npwidthBottom), 'um'
+
 plt.show()
     
 
