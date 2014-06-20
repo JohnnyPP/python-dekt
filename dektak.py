@@ -203,24 +203,26 @@ def FindThresholdLine(x,y,threshold, start):
 
 x, y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),usecols=(0,1), unpack=True)
 
-plt.figure('Full raw data')
-plt.plot(x,y)
-plt.title('Full raw data')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.grid(True)
-#plt.show()
-
 ##############################################################################
 ##levelling of the surface tilt
 
 coefficients = np.polyfit(x, y, 2)
 polynomial = np.poly1d(coefficients)
-ys = polynomial(x)
+yPoly = polynomial(x)
 
 print 'Fitted line equation f(x) =', polynomial
 
-yLevelled=y-ys          #levelled line scan
+yLevelled=y-yPoly          #levelled line scan
+
+plt.figure('Full raw data')
+plt.plot(x,y,label='Full raw data')
+plt.plot(x,yPoly,label='Polynomial')
+plt.title('Full raw data')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.legend()
+plt.grid(True)
+#plt.show()
 
 
 plt.figure('Full data after levelling and averaging')
