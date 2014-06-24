@@ -6,8 +6,8 @@ import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
-filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good   18thPositive peak short 
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_12_normal.csv' #abottom IndexError: list index out of range
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_normal.csv'  #abottom IndexError: list index out of range
