@@ -399,7 +399,7 @@ for sliceNumber in range(maxHarmonic):
         aincPositve, adecPositve = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold, start)    
         if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
             if maxtab[sliceNumber][1]-threshold<thresholdLenght:
-                print 'Entered threshold lenght case'
+                print 'Entered threshold length case positive peaks'
                 print maxtab[sliceNumber][1]-threshold
                 print sliceNumber
             else:  
@@ -429,7 +429,7 @@ for sliceNumber in range(maxHarmonic):
         aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
             if mintab[sliceNumber][1]+threshold>-thresholdLenght:
-                print 'Entered threshold lenght case Negative peaks'
+                print 'Entered threshold length case negative peaks'
                 print mintab[sliceNumber][1]+threshold
                 print sliceNumber
                 print -threshold
@@ -533,8 +533,14 @@ for sliceNumber in range(maxHarmonic):
 npWidthTop = np.array(widthTop)
 npWidthBottom = np.array(widthBottom)
 
-print 'Mean top widht:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-print 'Mean bottom widht: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+print 'Mean top width:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+
+
+
+
+
+
 
 plt.show()
 
