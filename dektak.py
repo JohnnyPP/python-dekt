@@ -205,7 +205,6 @@ x, y=np.loadtxt(filename,dtype=float,delimiter=',',skiprows=FindHeaderLength(),u
 
 ##############################################################################
 ##levelling of the surface tilt
-
 coefficients = np.polyfit(x, y, 2)
 polynomial = np.poly1d(coefficients)
 yPoly = polynomial(x)
@@ -253,11 +252,11 @@ dataLenghtFFT = len(yLevelMovingAverage)/2        #divide by 2 to satify rfft
                     # of the signal or on its sampling frequency 
 
 calculatedFFT = np.fft.rfft(yLevelMovingAverage) 
-amplitudeFFT = np.abs(calculatedFFT)    #calculates FFT amplitude from 
-                                        #complex calculatedFFT output
-phaseFFT = np.angle(calculatedFFT)      #calculates FFT phase from 
-                                        #complex calculatedFFT output
-phaseDegreesFFT = np.rad2deg(phaseFFT)  #convert to degrees
+amplitudeFFT = np.abs(calculatedFFT)    # calculates FFT amplitude from
+                                        # complex calculatedFFT output
+phaseFFT = np.angle(calculatedFFT)      # calculates FFT phase from
+                                        # complex calculatedFFT output
+phaseDegreesFFT = np.rad2deg(phaseFFT)  # convert to degrees
 amplitudeScaledFFT = amplitudeFFT/float(dataLenghtFFT)
                  # scale by the number of points so that
                  # the magnitude does not depend on the length 
