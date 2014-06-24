@@ -531,13 +531,14 @@ for sliceNumber in range(maxHarmonic):
 #plt.ylabel('Raw Micrometer [um]')
 #plt.grid(True)
 npWidthTop = np.array(widthTop)
-npwidthBottom = np.array(widthBottom)
+npWidthBottom = np.array(widthBottom)
 
 print 'Mean top widht:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-print 'Mean bottom widht: ', np.mean(npwidthBottom), '+/-', np.std(npwidthBottom), 'um'
+print 'Mean bottom widht: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
 
 plt.show()
-    
+
+
 
 
 #############################################################################
