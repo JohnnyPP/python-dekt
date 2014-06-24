@@ -390,7 +390,7 @@ for sliceNumber in range(maxHarmonic):
     
     xShiftedToZero=xIFFT[start:stop]-xIFFT[start:stop][0]
     
-    thresholdLenght=0.02
+    thresholdLength=0.02
     #thresholdLenght=0.0
     #thresholdLenght=0.01
     
@@ -398,7 +398,7 @@ for sliceNumber in range(maxHarmonic):
         #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
         aincPositve, adecPositve = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold, start)    
         if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
-            if maxtab[sliceNumber][1]-threshold<thresholdLenght:
+            if maxtab[sliceNumber][1]-threshold<thresholdLength:
                 print 'Entered threshold length case positive peaks'
                 print maxtab[sliceNumber][1]-threshold
                 print sliceNumber
@@ -428,7 +428,7 @@ for sliceNumber in range(maxHarmonic):
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
         aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
-            if mintab[sliceNumber][1]+threshold>-thresholdLenght:
+            if mintab[sliceNumber][1]+threshold>-thresholdLength:
                 print 'Entered threshold length case negative peaks'
                 print mintab[sliceNumber][1]+threshold
                 print sliceNumber

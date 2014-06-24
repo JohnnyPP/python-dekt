@@ -28,15 +28,15 @@
       <file leaf-file-name="dektak.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dektak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.3455149" vertical-offset="3225" max-vertical-offset="8865">
-              <caret line="431" column="54" selection-start-line="431" selection-start-column="54" selection-end-line="431" selection-end-column="54" />
+            <state vertical-scroll-proportion="1.9468439" vertical-offset="2758" max-vertical-offset="8865">
+              <caret line="424" column="25" selection-start-line="424" selection-start-column="25" selection-end-line="424" selection-end-column="25" />
               <folding>
                 <element signature="e#1832#2292#0" expanded="false" />
                 <element signature="e#2332#4344#0" expanded="false" />
                 <element signature="e#4375#4398#0" expanded="false" />
                 <element signature="e#4429#4457#0" expanded="false" />
                 <element signature="e#4509#7638#0" expanded="false" />
-                <marker date="1403631849810" expanded="true" signature="8047:8711" placeholder="..." />
+                <marker date="1403631996775" expanded="true" signature="8047:8711" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -301,7 +301,7 @@
     </task>
     <servers />
   </component>
-  <component name="TodoView" selected-index="0">
+  <component name="TodoView" selected-index="1">
     <todo-panel id="selected-file">
       <are-packages-shown value="false" />
       <are-modules-shown value="false" />
@@ -376,7 +376,7 @@
             <element signature="e#4375#4398#0" expanded="false" />
             <element signature="e#4429#4457#0" expanded="false" />
             <element signature="e#4509#7638#0" expanded="false" />
-            <marker date="1403631849810" expanded="true" signature="8047:8711" placeholder="..." />
+            <marker date="1403631996775" expanded="true" signature="8047:8711" placeholder="..." />
           </folding>
         </state>
       </provider>
@@ -402,15 +402,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dektak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3455149" vertical-offset="3225" max-vertical-offset="8865">
-          <caret line="431" column="54" selection-start-line="431" selection-start-column="54" selection-end-line="431" selection-end-column="54" />
+        <state vertical-scroll-proportion="1.9468439" vertical-offset="2758" max-vertical-offset="8865">
+          <caret line="424" column="25" selection-start-line="424" selection-start-column="25" selection-end-line="424" selection-end-column="25" />
           <folding>
             <element signature="e#1832#2292#0" expanded="false" />
             <element signature="e#2332#4344#0" expanded="false" />
             <element signature="e#4375#4398#0" expanded="false" />
             <element signature="e#4429#4457#0" expanded="false" />
             <element signature="e#4509#7638#0" expanded="false" />
-            <marker date="1403631849810" expanded="true" signature="8047:8711" placeholder="..." />
+            <marker date="1403631996775" expanded="true" signature="8047:8711" placeholder="..." />
           </folding>
         </state>
       </provider>
