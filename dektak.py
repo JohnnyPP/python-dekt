@@ -6,9 +6,9 @@ import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
-filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good    
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good   18thPositive peak short 
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_12_normal.csv' #abottom IndexError: list index out of range
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_normal.csv'  #abottom IndexError: list index out of range
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_normal.csv'
@@ -391,9 +391,9 @@ for sliceNumber in range(maxHarmonic):
     
     xShiftedToZero=xIFFT[start:stop]-xIFFT[start:stop][0]
     
-    thresholdLenght=0.025
+    thresholdLenght=0.02
     #thresholdLenght=0.0
-    
+    #thresholdLenght=0.01
     
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
         #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
@@ -429,14 +429,20 @@ for sliceNumber in range(maxHarmonic):
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
         aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
-            increasingPoints = []
-            incLineEquationCoefficients = []
-            incIntersectionPoints = []
-            decLineEquationCoefficients = []
-            decreasingPoints = []
-            decIntersectionPoints = []
-            aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold-thresholdStep, start)
-            break
+            if mintab[sliceNumber][1]+threshold>-thresholdLenght:
+                print 'Entered threshold lenght case Negative peaks'
+                print mintab[sliceNumber][1]+threshold
+                print sliceNumber
+                print -threshold
+            else:
+                increasingPoints = []
+                incLineEquationCoefficients = []
+                incIntersectionPoints = []
+                decLineEquationCoefficients = []
+                decreasingPoints = []
+                decIntersectionPoints = []
+                aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold-thresholdStep, start)
+                break
         increasingPoints = []
         incLineEquationCoefficients = []
         incIntersectionPoints = []
