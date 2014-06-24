@@ -367,7 +367,7 @@ fig.subplots_adjust(hspace = .5, wspace=.2)
 axs = axs.ravel()
 plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
-for sliceNumber in range(20):
+for sliceNumber in range(maxHarmonic):
 
     indexOfMaxOccurrence = np.where(x>maxtab[sliceNumber][0])
     indexOfMinOccurrence = np.where(x>mintab[sliceNumber][0])
@@ -391,19 +391,27 @@ for sliceNumber in range(20):
     
     xShiftedToZero=xIFFT[start:stop]-xIFFT[start:stop][0]
     
+    thresholdLenght=0.025
+    #thresholdLenght=0.0
+    
     
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
         #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
         aincPositve, adecPositve = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold, start)    
         if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
-            increasingPoints = []
-            incLineEquationCoefficients = []
-            incIntersectionPoints = []
-            decLineEquationCoefficients = []
-            decreasingPoints = []
-            decIntersectionPoints = []
-            aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold+thresholdStep, start)
-            break
+            if maxtab[sliceNumber][1]-threshold<thresholdLenght:
+                print 'Entered threshold lenght case'
+                print maxtab[sliceNumber][1]-threshold
+                print sliceNumber
+            else:  
+                increasingPoints = []
+                incLineEquationCoefficients = []
+                incIntersectionPoints = []
+                decLineEquationCoefficients = []
+                decreasingPoints = []
+                decIntersectionPoints = []
+                aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold+thresholdStep, start)
+                break          
         increasingPoints = []
         incLineEquationCoefficients = []
         incIntersectionPoints = []
@@ -418,7 +426,7 @@ for sliceNumber in range(20):
     decreasingPoints = []
     decIntersectionPoints = []
     
-    for threshold in reversed(np.arange(0, 0.15, 0.001)): 
+    for threshold in reversed(np.arange(0, 0.15, thresholdStep)): 
         aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
             increasingPoints = []
@@ -428,7 +436,7 @@ for sliceNumber in range(20):
             decreasingPoints = []
             decIntersectionPoints = []
             aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold-thresholdStep, start)
-            break 
+            break
         increasingPoints = []
         incLineEquationCoefficients = []
         incIntersectionPoints = []
