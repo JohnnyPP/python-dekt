@@ -5,7 +5,7 @@ import sys
 import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good   18thPositive peak short
@@ -16,7 +16,7 @@ from numpy import NaN, Inf, arange, isscalar, asarray, array
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_24_normal.csv'  #no top & bottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_parallel.csv'  #no top & bottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_15_parallel.csv'  #abottom IndexError: list index out of range
-filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_parallel.csv'  #0.035 too low 0.04 ok BADabottom
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_19_parallel.csv'  #0.035 too low 0.04 ok BADabottom
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_24_parallel.csv' #first peak very good
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_3_normal.csv'
@@ -555,11 +555,14 @@ plt.figure('Std')
 plt.plot(stdWidthTop)
 plt.plot(stdWidthBottom)
 
-plt.figure('Std+std')
-plt.plot(stdWidthTop+stdWidthBottom)
+npStdWidthTop = np.array(stdWidthTop)
+npStdWidthBottom = np.array(stdWidthBottom)
 
-#plt.figure('Std*std')
-#plt.plot(stdWidthTop*stdWidthBottom)
+plt.figure('Std+std')
+plt.plot(npStdWidthTop+npStdWidthBottom)
+
+plt.figure('Std*std')
+plt.plot(npStdWidthTop*npStdWidthBottom)
 
 plt.show()
 
