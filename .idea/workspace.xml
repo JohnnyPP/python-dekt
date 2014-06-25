@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1b21b61f-162f-4fdf-b18a-5ad7a6a28eb4" name="Default" comment="">
+    <list default="true" id="1b21b61f-162f-4fdf-b18a-5ad7a6a28eb4" name="Default" comment="Break thresholdLength for loop if np.std(npWidthTop) &gt; 5 or np.std(npWidthBottom) &gt; 5">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="dektak.iws" />
@@ -287,7 +287,11 @@
       <created>1403707510818</created>
       <updated>1403707510818</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Break thresholdLength for loop if np.std(npWidthTop) &gt; 5 or np.std(npWidthBottom) &gt; 5">
+      <created>1403707625479</created>
+      <updated>1403707625479</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
