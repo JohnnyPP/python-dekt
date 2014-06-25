@@ -1,11 +1,11 @@
-import numpy as np 
+import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal as scipy
 import sys
 import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
-filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
+#filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good   18thPositive peak short
@@ -23,7 +23,7 @@ filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_7_normal.csv'    #short peak
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_15_normal.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_3_19_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_3_19_normal.csv'
 
 def FindHeaderLength():
     """
@@ -33,13 +33,13 @@ def FindHeaderLength():
     """
 
     lookup = 'Lateral um'
-    
+
     with open(filename) as myFile:
         for FoundPosition, line in enumerate(myFile, 1):
             if lookup in line:
                 print 'Scan Data found at line:', FoundPosition
                 break
-    
+
     return FoundPosition+4
 
 
@@ -70,26 +70,26 @@ def peakdet(v, delta, x = None):
     """
     maxtab = []
     mintab = []
-       
+
     if x is None:
         x = arange(len(v))
-    
+
     v = asarray(v)
-    
+
     if len(v) != len(x):
         sys.exit('Input vectors v and x must have same length')
-    
+
     if not isscalar(delta):
         sys.exit('Input argument delta must be a scalar')
-    
+
     if delta <= 0:
         sys.exit('Input argument delta must be positive')
-    
+
     mn, mx = Inf, -Inf
     mnpos, mxpos = NaN, NaN
-    
+
     lookformax = True
-    
+
     for i in arange(len(v)):
         this = v[i]
         if this > mx:
@@ -98,7 +98,7 @@ def peakdet(v, delta, x = None):
         if this < mn:
             mn = this
             mnpos = x[i]
-        
+
         if lookformax:
             if this < mx-delta:
                 maxtab.append((mxpos, mx))
@@ -139,7 +139,7 @@ def FindThresholdLine(x,y,threshold, start):
                 lineEquationCooficientsCrossongThr = np.array([coefAinc, 1, coefCinc])
                 increasingPoints.append(incPointsCrossingThreshold)
                 incLineEquationCoefficients.append(lineEquationCooficientsCrossongThr)
-                
+
             else:
                 if y[i]>threshold and y[i+1]<threshold: #decreasing
                     #print "Decreasing line detected"
@@ -155,19 +155,19 @@ def FindThresholdLine(x,y,threshold, start):
                     decLineEquationCoefficients.append(lineEquationCooficientsCrossongThrDec)
                 #else:
                     #print "Neither dereasing nor incereasing line"
-                
+
         else:
             break
-    
+
     A2=thresholdLineArray[0]
     B2=thresholdLineArray[1]
     C2=thresholdLineArray[2]
-    
+
     for i in xrange(0, incLineEquationCoefficients.__len__()):
         A1=incLineEquationCoefficients[i][0]
         B1=incLineEquationCoefficients[i][1]
         C1=incLineEquationCoefficients[i][2]
-    
+
         detW = float(A1*B2-A2*B1)
         detWx = float((C1)*B2-(C2)*B1)
         detWy = float(A1*(C2)-A2*(C1))
@@ -175,15 +175,15 @@ def FindThresholdLine(x,y,threshold, start):
         pointY = float(detWy/detW)
         incIntersectionPoints.append(np.array([pointX,pointY]))
         #plt.plot(xDiff[i+start],incIntersectionPoints[i][1],'go')
-        
-        
+
+
         #plt.plot(incIntersectionPoints[i][0],incIntersectionPoints[i][1],'go')
-        
+
     for i in xrange(0, decLineEquationCoefficients.__len__()):
         decA1=decLineEquationCoefficients[i][0]
         decB1=decLineEquationCoefficients[i][1]
         decC1=decLineEquationCoefficients[i][2]
-         
+
         decdetW = float(decA1*B2-A2*decB1)
         decdetWx = float((decC1)*B2-(C2)*decB1)
         decdetWy = float(decA1*(C2)-A2*(decC1))
@@ -192,7 +192,7 @@ def FindThresholdLine(x,y,threshold, start):
         decIntersectionPoints.append(np.array([decpointX,decpointY]))
         #plt.plot(xDiff[i+start],decIntersectionPoints[i][1],'ro')
         #plt.plot(decIntersectionPoints[i][0]+x[start]/2,decIntersectionPoints[i][1],'ro')
-        
+
         #plt.plot(decIntersectionPoints[i][0],decIntersectionPoints[i][1],'ro')
     return incIntersectionPoints, decIntersectionPoints
 
@@ -248,10 +248,10 @@ plt.grid(True)
 
 dataLenghtFFT = len(yLevelMovingAverage)/2        #divide by 2 to satify rfft
                     # scale by the number of points so that
-                    # the magnitude does not depend on the length 
-                    # of the signal or on its sampling frequency 
+                    # the magnitude does not depend on the length
+                    # of the signal or on its sampling frequency
 
-calculatedFFT = np.fft.rfft(yLevelMovingAverage) 
+calculatedFFT = np.fft.rfft(yLevelMovingAverage)
 amplitudeFFT = np.abs(calculatedFFT)    # calculates FFT amplitude from
                                         # complex calculatedFFT output
 phaseFFT = np.angle(calculatedFFT)      # calculates FFT phase from
@@ -259,13 +259,13 @@ phaseFFT = np.angle(calculatedFFT)      # calculates FFT phase from
 phaseDegreesFFT = np.rad2deg(phaseFFT)  # convert to degrees
 amplitudeScaledFFT = amplitudeFFT/float(dataLenghtFFT)
                  # scale by the number of points so that
-                 # the magnitude does not depend on the length 
+                 # the magnitude does not depend on the length
                  # of the signal
 amplitudeScaledRMSFFT = amplitudeFFT/float(dataLenghtFFT)/math.sqrt(2)
 # Scaling to Root mean square amplitude (dataLenghtFFT/sqrt{2}),
 
 
-xFFT = np.linspace(0,dataLenghtFFT+1,dataLenghtFFT+1)   
+xFFT = np.linspace(0,dataLenghtFFT+1,dataLenghtFFT+1)
                                 #the range is two times smaller +1 for RFFT
                                 #sinus signal without noise used for fit
 
@@ -297,7 +297,7 @@ print 'Number of structures calculated using FFT:', maxHarmonic
 ##calculate first order difference along the averaged levelled data
 
 yDiff = np.diff(yLevelMovingAverage)
-dataLength = len(yLevelMovingAverage) 
+dataLength = len(yLevelMovingAverage)
 xDiff = np.delete(x,dataLength-1)   #diff consumes one last element from the array
 
 plt.figure('First order difference along the averaged levelled data')
@@ -314,7 +314,7 @@ plt.grid(True)
 
 FirstHarmonics=1500 #only first 'FirstHarmonics' will be left in the FFT data
 
-calculatedFFTFiltered = np.fft.rfft(yDiff) 
+calculatedFFTFiltered = np.fft.rfft(yDiff)
 calculatedFFTFiltered[FirstHarmonics:]=0    #any harmonics greater than 'FirstHarmonics' #are set to 0
 yCalculatedIFFTFiltered = np.fft.irfft(calculatedFFTFiltered) #caclulate IFFT from the filtered FFT
 
@@ -546,6 +546,8 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdStep)):
     stdWidthTop.append(np.std(npWidthTop))
     stdWidthBottom.append(np.std(npWidthBottom))
 
+    if np.std(npWidthTop) > 5 or np.std(npWidthBottom) > 5:
+        break
 
 
 print stdWidthTop
