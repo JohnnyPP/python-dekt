@@ -21,9 +21,9 @@ from numpy import NaN, Inf, arange, isscalar, asarray, array
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_6_normal.csv'
-#filename = '/home/kolan/mycode/python/dektak/data/t10_3_7_normal.csv'    #short peak
+filename = '/home/kolan/mycode/python/dektak/data/t10_3_7_normal.csv'    #short peak
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_15_normal.csv'
-filename = '/home/kolan/mycode/python/dektak/data/t10_3_19_normal.csv'
+#filename = '/home/kolan/mycode/python/dektak/data/t10_3_19_normal.csv'
 
 def FindHeaderLength():
     """
@@ -370,9 +370,9 @@ plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
 #thresholdLength=0.03
 
-thresholdStep=0.002
+thresholdLengthStep=0.002
 
-for thresholdLength in (np.arange(0.0, 0.04, thresholdStep)):
+for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
     for sliceNumber in range(maxHarmonic):
 
         indexOfMaxOccurrence = np.where(x>maxtab[sliceNumber][0])
@@ -546,9 +546,8 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdStep)):
     stdWidthTop.append(np.std(npWidthTop))
     stdWidthBottom.append(np.std(npWidthBottom))
 
-    if np.std(npWidthTop) > 5 or np.std(npWidthBottom) > 5:
+    if np.std(npWidthTop) > 4 or np.std(npWidthBottom) > 4:
         break
-
 
 print stdWidthTop
 print stdWidthBottom
@@ -562,6 +561,11 @@ npStdWidthBottom = np.array(stdWidthBottom)
 
 plt.figure('Std+std')
 plt.plot(npStdWidthTop+npStdWidthBottom)
+
+sumWidth=npStdWidthTop+npStdWidthBottom
+minThresholdLength=np.where(sumWidth==sumWidth.min())[0][0]*thresholdLengthStep
+
+print 'Min threshold lenght', minThresholdLength
 
 plt.figure('Std*std')
 plt.plot(npStdWidthTop*npStdWidthBottom)
