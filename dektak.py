@@ -5,7 +5,7 @@ import sys
 import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
-#filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
+filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_6_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_1_7_normal.csv'    #first peak very good   18thPositive peak short
@@ -21,7 +21,7 @@ from numpy import NaN, Inf, arange, isscalar, asarray, array
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_1_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_3_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_6_normal.csv'
-filename = '/home/kolan/mycode/python/dektak/data/t10_3_7_normal.csv'    #short peak
+#filename = '/home/kolan/mycode/python/dektak/data/t10_3_7_normal.csv'    #short peak
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_15_normal.csv'
 #filename = '/home/kolan/mycode/python/dektak/data/t10_3_19_normal.csv'
 
@@ -561,14 +561,204 @@ npStdWidthBottom = np.array(stdWidthBottom)
 
 plt.figure('Std+std')
 plt.plot(npStdWidthTop+npStdWidthBottom)
+plt.figure('Std*std')
+plt.plot(npStdWidthTop*npStdWidthBottom)
 
 sumWidth=npStdWidthTop+npStdWidthBottom
 minThresholdLength=np.where(sumWidth==sumWidth.min())[0][0]*thresholdLengthStep
 
-print 'Min threshold lenght', minThresholdLength
+print 'Min threshold length', minThresholdLength
 
-plt.figure('Std*std')
-plt.plot(npStdWidthTop*npStdWidthBottom)
+increasingPoints = []
+incLineEquationCoefficients = []
+incIntersectionPoints = []
+decLineEquationCoefficients = []
+decreasingPoints = []
+decIntersectionPoints = []
+top = []
+bottom = []
+xLineTop = []
+yLineTop = []
+xLineBottom = []
+yLineBottom = []
+widthTop = []
+widthBottom = []
+stdWidthTop = []
+stdWidthBottom = []
+
+for sliceNumber in range(maxHarmonic):
+
+    indexOfMaxOccurrence = np.where(x>maxtab[sliceNumber][0])
+    indexOfMinOccurrence = np.where(x>mintab[sliceNumber][0])
+
+    start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+    stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+
+    increasingPoints = []
+    incLineEquationCoefficients = []
+    incIntersectionPoints = []
+    decLineEquationCoefficients = []
+    decreasingPoints = []
+    decIntersectionPoints = []
+    top = []
+    bottom = []
+
+    thresholdStep = 0.001
+    signalIFFT = np.column_stack((xDiff,yCalculatedIFFTFiltered))
+    xIFFT = signalIFFT[:,0]
+    yIFFT = signalIFFT[:,1]
+
+    xShiftedToZero=xIFFT[start:stop]-xIFFT[start:stop][0]
+
+
+        #thresholdLenght=0.0
+        #thresholdLenght=0.01
+
+    for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
+        #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
+        aincPositve, adecPositve = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold, start)
+        if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
+            if maxtab[sliceNumber][1]-threshold<minThresholdLength:
+                print 'Entered threshold length case positive peaks'
+                print maxtab[sliceNumber][1]-threshold
+                print sliceNumber
+            else:
+                increasingPoints = []
+                incLineEquationCoefficients = []
+                incIntersectionPoints = []
+                decLineEquationCoefficients = []
+                decreasingPoints = []
+                decIntersectionPoints = []
+                aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],threshold+thresholdStep, start)
+                break
+        increasingPoints = []
+        incLineEquationCoefficients = []
+        incIntersectionPoints = []
+        decLineEquationCoefficients = []
+        decreasingPoints = []
+        decIntersectionPoints = []
+
+    increasingPoints = []
+    incLineEquationCoefficients = []
+    incIntersectionPoints = []
+    decLineEquationCoefficients = []
+    decreasingPoints = []
+    decIntersectionPoints = []
+
+    for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
+        aincNegative, adecNegative = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold, start)
+        if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
+            if mintab[sliceNumber][1]+threshold>-minThresholdLength:
+                print 'Entered threshold length case negative peaks'
+                print mintab[sliceNumber][1]+threshold
+                print sliceNumber
+                print -threshold
+            else:
+                increasingPoints = []
+                incLineEquationCoefficients = []
+                incIntersectionPoints = []
+                decLineEquationCoefficients = []
+                decreasingPoints = []
+                decIntersectionPoints = []
+                aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero,yIFFT[start:stop],-threshold-thresholdStep, start)
+                break
+        increasingPoints = []
+        incLineEquationCoefficients = []
+        incIntersectionPoints = []
+        decLineEquationCoefficients = []
+        decreasingPoints = []
+        decIntersectionPoints = []
+
+    abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+    atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+
+    widthBottom.append(abottom)
+    widthTop.append(atop)
+
+        #difference signal
+        #plt.plot(xIFFT[start:stop],yIFFT[start:stop])
+        #plt.plot(xIFFT[3000:6000],yIFFT[3000:6000])
+        #plt.grid(True)
+
+        ##############################################################################
+        ##Translate the points found in Diff data to the xy data
+
+    xShiftedToZero=x[start:stop]-x[start:stop][0]
+
+    iyTop1 = np.where(xShiftedToZero>adecPositveLast[0][0])
+    iyTop2 = np.where(xShiftedToZero>adecNegativeLast[0][0])
+
+    iyBottom1 = np.where(xShiftedToZero>aincPositveLast[0][0])
+    iyBottom2 = np.where(xShiftedToZero>aincNegativeLast[0][0])
+
+    xPointTop1 = iyTop1[0][0]
+    xPointTop2 = iyTop2[0][0]
+
+    xPointBottom1 = iyBottom1[0][0]
+    xPointBottom2 = iyBottom2[0][0]
+
+    yPointTop1 = yLevelled[start:stop][xPointTop1]
+    yPointTop2 = yLevelled[start:stop][xPointTop2]
+    yPointBottom1 = yLevelled[start:stop][xPointBottom1]
+    yPointBottom2 = yLevelled[start:stop][xPointBottom2]
+
+    xPointTop1 = adecPositveLast[0][0]
+    xPointTop2 = adecNegativeLast[0][0]
+    xPointBottom1 = aincPositveLast[0][0]
+    xPointBottom2 = aincNegativeLast[0][0]
+
+    xLineTop = []
+    yLineTop = []
+    xLineBottom = []
+    yLineBottom = []
+
+    xLineTop.append(xPointTop1)
+    xLineTop.append(xPointTop2)
+    yLineTop.append(yPointTop1)
+    yLineTop.append(yPointTop2)
+
+    xLineBottom.append(xPointBottom1)
+    xLineBottom.append(xPointBottom2)
+    yLineBottom.append(yPointBottom1)
+    yLineBottom.append(yPointBottom2)
+
+    axs[sliceNumber].plot(xPointTop1,yPointTop1,'bo')
+    axs[sliceNumber].plot(xPointTop2,yPointTop2,'bo')
+    axs[sliceNumber].plot(xLineTop,yLineTop)
+    xShiftedToZero=x[start:stop]-x[start:stop][0]
+    axs[sliceNumber].plot(xShiftedToZero,yLevelled[start:stop])
+    axs[sliceNumber].plot(xPointBottom1,yPointBottom1,'ro')
+    axs[sliceNumber].plot(xPointBottom2,yPointBottom2,'ro')
+    axs[sliceNumber].plot(xLineBottom,yLineBottom)
+    #plt.title('Data after levelling')
+    #plt.xlabel('Lateral [um]')
+    #plt.ylabel('Raw Micrometer [um]')
+    axs[sliceNumber].grid(True)
+    axs[sliceNumber].set_title(str(sliceNumber))
+
+
+    #plt.figure('Sliced structure')
+    #plt.plot(xPointTop1,yPointTop1,'bo')
+    #plt.plot(xPointTop2,yPointTop2,'bo')
+    #plt.plot(xLineTop,yLineTop)
+    #xShiftedToZero=x[start:stop]-x[start:stop][0]
+    #plt.plot(xShiftedToZero,yLevelled[start:stop])
+    #plt.plot(xPointBottom1,yPointBottom1,'ro')
+    #plt.plot(xPointBottom2,yPointBottom2,'ro')
+    #plt.plot(xLineBottom,yLineBottom)
+    #plt.title('Data after levelling')
+    #plt.xlabel('Lateral [um]')
+    #plt.ylabel('Raw Micrometer [um]')
+    #plt.grid(True)
+npWidthTop = np.array(widthTop)
+npWidthBottom = np.array(widthBottom)
+
+print 'Mean top width with threshold length:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+print 'Mean bottom width with threshold length: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+
+stdWidthTop.append(np.std(npWidthTop))
+stdWidthBottom.append(np.std(npWidthBottom))
+
 
 plt.show()
 
