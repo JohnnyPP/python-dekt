@@ -266,7 +266,7 @@ def moving_average(data_to_average, average_size):
     Calculates moving average of the levelled data
     :param data_to_average:
     :param average_size:
-    :return:
+    :return: yLevelMovingAverage averaged levelled data
     """
 
     yLevelMovingAverage = scipy.medfilt(data_to_average, average_size)
@@ -279,56 +279,66 @@ def moving_average(data_to_average, average_size):
 
 yLevelMovingAverage = moving_average(yLevelled, 277)
 
+def amplitude_and_phase_FFT(data_to_analyze):
+    """
+    Calculates FFT of the data_to_analyze np.array. Plots the amplitude vs. harmonics and phase vs. harmonics.
+    :param data_to_analyze: input np.array with the data
+    :return: averageStructuresHeight, maxHarmonic
+    """
 
-##############################################################################
-##FFT amplitude and phase plot of the raw data after moving average
+    ##############################################################################
+    ##FFT amplitude and phase plot of the raw data after moving average
 
-dataLenghtFFT = len(yLevelMovingAverage) / 2  #divide by 2 to satify rfft
-# scale by the number of points so that
-# the magnitude does not depend on the length
-# of the signal or on its sampling frequency
+    dataLenghtFFT = len(data_to_analyze) / 2  # divide by 2 to satisfy rfft
+    # scale by the number of points so that
+    # the magnitude does not depend on the length
+    # of the signal or on its sampling frequency
 
-calculatedFFT = np.fft.rfft(yLevelMovingAverage)
-amplitudeFFT = np.abs(calculatedFFT)  # calculates FFT amplitude from
-# complex calculatedFFT output
-phaseFFT = np.angle(calculatedFFT)  # calculates FFT phase from
-# complex calculatedFFT output
-phaseDegreesFFT = np.rad2deg(phaseFFT)  # convert to degrees
-amplitudeScaledFFT = amplitudeFFT / float(dataLenghtFFT)
-# scale by the number of points so that
-# the magnitude does not depend on the length
-# of the signal
-amplitudeScaledRMSFFT = amplitudeFFT / float(dataLenghtFFT) / math.sqrt(2)
-# Scaling to Root mean square amplitude (dataLenghtFFT/sqrt{2}),
+    calculatedFFT = np.fft.rfft(data_to_analyze)
+    amplitudeFFT = np.abs(calculatedFFT)  # calculates FFT amplitude from
+    # complex calculatedFFT output
+    phaseFFT = np.angle(calculatedFFT)  # calculates FFT phase from
+    # complex calculatedFFT output
+    phaseDegreesFFT = np.rad2deg(phaseFFT)  # convert to degrees
+    amplitudeScaledFFT = amplitudeFFT / float(dataLenghtFFT)
+    # scale by the number of points so that
+    # the magnitude does not depend on the length
+    # of the signal
+    amplitudeScaledRMSFFT = amplitudeFFT / float(dataLenghtFFT) / math.sqrt(2)
+    # Scaling to Root mean square amplitude (dataLengthFFT/sqrt{2}),
 
 
-xFFT = np.linspace(0, dataLenghtFFT + 1, dataLenghtFFT + 1)
-#the range is two times smaller +1 for RFFT
-#sinus signal without noise used for fit
+    xFFT = np.linspace(0, dataLenghtFFT + 1, dataLenghtFFT + 1)
+    #the range is two times smaller +1 for RFFT
+    #sinus signal without noise used for fit
 
-plt.figure("FFT amplitude and phase harmonics")
-plt.subplot(2, 1, 1)
-plt.vlines(xFFT, 0, amplitudeScaledFFT)
-plt.title("FFT amplitude harmonics")
-plt.xlabel("Harmonics")
-plt.ylabel("Amplitude [V]")
-plt.xlim(0, dataLenghtFFT / 2 + 1)  # adjusts the x axis to maximum of numberOfPoints
-plt.grid(True)
+    plt.figure("FFT amplitude and phase harmonics")
+    plt.subplot(2, 1, 1)
+    plt.vlines(xFFT, 0, amplitudeScaledFFT)
+    plt.title("FFT amplitude harmonics")
+    plt.xlabel("Harmonics")
+    plt.ylabel("Amplitude [V]")
+    plt.xlim(0, dataLenghtFFT / 2 + 1)  # adjusts the x axis to maximum of numberOfPoints
+    plt.grid(True)
 
-plt.subplot(2, 1, 2)
-plt.vlines(xFFT, 0, phaseDegreesFFT)
-plt.title("FFT phase harmonics")
-plt.xlabel("Harmonics")
-plt.ylabel("Phase [deg]")
-plt.tight_layout()  #removes the overlapping of the labels in subplots
-plt.xlim(0, dataLenghtFFT + 1)
-plt.grid(True)
+    plt.subplot(2, 1, 2)
+    plt.vlines(xFFT, 0, phaseDegreesFFT)
+    plt.title("FFT phase harmonics")
+    plt.xlabel("Harmonics")
+    plt.ylabel("Phase [deg]")
+    plt.tight_layout()  #removes the overlapping of the labels in subplots
+    plt.xlim(0, dataLenghtFFT + 1)
+    plt.grid(True)
 
-averageStructureHeight = amplitudeScaledFFT.max()
-maxHarmonic = np.where(amplitudeScaledFFT == amplitudeScaledFFT.max())[0][0] - 1
+    averageStructuresHeight = amplitudeScaledFFT.max()
+    maxHarmonic = np.where(amplitudeScaledFFT == amplitudeScaledFFT.max())[0][0] - 1
 
-print 'Average structures height calculated using FFT:', averageStructureHeight * 2, 'um'  #averageStructureHeight is amplitude
-print 'Number of structures calculated using FFT:', maxHarmonic
+    print 'Average structures height calculated using FFT:', averageStructuresHeight * 2, 'um'  #averageStructureHeight is amplitude
+    print 'Number of structures calculated using FFT:', maxHarmonic
+
+    return averageStructuresHeight, maxHarmonic
+
+averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
 
 ###############################################################################
 ##calculate first order difference along the averaged levelled data
