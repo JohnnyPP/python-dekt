@@ -106,7 +106,7 @@ def coefC(x0, y0, x1, y1):
     return (x1 * y0 - x0 * y1) / (x1 - x0)
 
 
-def FindThresholdLine(x, y, threshold, start):
+def FindThresholdLine(x, y, threshold):
     thresholdLineArray = np.array([0, 1, threshold])
     for i in xrange(0, len(y)):
         if i < (len(y) - 1):
@@ -421,6 +421,34 @@ def find_minima_and_maxima(xdata, ydata, peak_threshold):
 
     return maxtab, mintab
 
+def scanning_threshold_positive():
+
+    for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
+    #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
+        aincPositve, adecPositve = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], threshold, start)
+        if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
+            if maxtab[sliceNumber][1] - threshold < thresholdLength:
+                print 'Entered threshold length case positive peaks'
+                print maxtab[sliceNumber][1] - threshold
+                print sliceNumber
+            else:
+                increasingPoints = []
+                incLineEquationCoefficients = []
+                incIntersectionPoints = []
+                decLineEquationCoefficients = []
+                decreasingPoints = []
+                decIntersectionPoints = []
+                aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
+                                                                         threshold + thresholdStep, start)
+                break
+            increasingPoints = []
+            incLineEquationCoefficients = []
+            incIntersectionPoints = []
+            decLineEquationCoefficients = []
+            decreasingPoints = []
+            decIntersectionPoints = []
+    return
+
 maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, 0.065)
 
 ##############################################################################
@@ -442,6 +470,13 @@ plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
 thresholdLengthStep = 0.002
 
+thresholdStep = 0.001
+signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
+xIFFT = signalIFFT[:, 0]
+yIFFT = signalIFFT[:, 1]
+
+
+
 for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
     for sliceNumber in range(maxHarmonic):
 
@@ -450,6 +485,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
 
         start = indexOfMaxOccurrence[0][0] - increaseSliceLength
         stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
 
         increasingPoints = []
         incLineEquationCoefficients = []
@@ -460,12 +496,6 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
         top = []
         bottom = []
 
-        thresholdStep = 0.001
-        signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
-        xIFFT = signalIFFT[:, 0]
-        yIFFT = signalIFFT[:, 1]
-
-        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
 
 
         #thresholdLenght=0.0
@@ -473,7 +503,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
 
         for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
             #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
-            aincPositve, adecPositve = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], threshold, start)
+            aincPositve, adecPositve = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], threshold)
             if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
                 if maxtab[sliceNumber][1] - threshold < thresholdLength:
                     print 'Entered threshold length case positive peaks'
@@ -487,7 +517,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
                     decreasingPoints = []
                     decIntersectionPoints = []
                     aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
-                                                                         threshold + thresholdStep, start)
+                                                                         threshold + thresholdStep)
                     break
             increasingPoints = []
             incLineEquationCoefficients = []
@@ -504,7 +534,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
         decIntersectionPoints = []
 
         for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
-            aincNegative, adecNegative = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], -threshold, start)
+            aincNegative, adecNegative = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], -threshold)
             if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
                 if mintab[sliceNumber][1] + threshold > -thresholdLength:
                     print 'Entered threshold length case negative peaks'
@@ -519,7 +549,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
                     decreasingPoints = []
                     decIntersectionPoints = []
                     aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
-                                                                           -threshold - thresholdStep, start)
+                                                                           -threshold - thresholdStep)
                     break
             increasingPoints = []
             incLineEquationCoefficients = []
@@ -688,7 +718,7 @@ for sliceNumber in range(maxHarmonic):
 
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
         #aincPositve, adecPositve = FindThresholdLine(xIFFT[start:stop],yIFFT[start:stop],threshold, start)
-        aincPositve, adecPositve = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], threshold, start)
+        aincPositve, adecPositve = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], threshold)
         if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
             if maxtab[sliceNumber][1] - threshold < minThresholdLength:
                 print 'Entered threshold length case positive peaks'
@@ -702,7 +732,7 @@ for sliceNumber in range(maxHarmonic):
                 decreasingPoints = []
                 decIntersectionPoints = []
                 aincPositveLast, adecPositveLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
-                                                                     threshold + thresholdStep, start)
+                                                                     threshold + thresholdStep)
                 break
         increasingPoints = []
         incLineEquationCoefficients = []
@@ -719,7 +749,7 @@ for sliceNumber in range(maxHarmonic):
     decIntersectionPoints = []
 
     for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
-        aincNegative, adecNegative = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], -threshold, start)
+        aincNegative, adecNegative = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], -threshold)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
             if mintab[sliceNumber][1] + threshold > -minThresholdLength:
                 print 'Entered threshold length case negative peaks'
@@ -734,7 +764,7 @@ for sliceNumber in range(maxHarmonic):
                 decreasingPoints = []
                 decIntersectionPoints = []
                 aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
-                                                                       -threshold - thresholdStep, start)
+                                                                       -threshold - thresholdStep)
                 break
         increasingPoints = []
         incLineEquationCoefficients = []
