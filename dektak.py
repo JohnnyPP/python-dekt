@@ -387,31 +387,41 @@ def FFT_filtering(x_data, y_data_to_filter, first_harmonics_to_keep):
 
 yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, 1500)
 
-##############################################################################
-##find the maxima and minima in FFT filtered data
-peakThreshold = 0.065  #reliable results between 0.05 and 0.09
-maxtab, mintab = peakdet(yCalculatedIFFTFiltered, peakThreshold, xDiff)
+def find_minima_and_maxima(xdata, ydata, peak_threshold):
+    """
+    Function finds the maxima and minima in FFT filtered data
+    :param xdata:
+    :param ydata:
+    :param threshold: # reliable results between 0.05 and 0.09
+    :return: maxtab, mintab
+    """
 
-plt.plot(maxtab[:, 0], maxtab[:, 1], 'o')
-plt.plot(mintab[:, 0], mintab[:, 1], 'o')
+    maxtab, mintab = peakdet(ydata, peak_threshold, xdata)
 
-peakDetectMaxima = len(maxtab)
-peakDetectMinima = len(mintab)
+    plt.plot(maxtab[:, 0], maxtab[:, 1], 'o')
+    plt.plot(mintab[:, 0], mintab[:, 1], 'o')
 
-print 'Number of found maxima in first order difference data', peakDetectMaxima
-print 'Number of found minima in first order difference data', peakDetectMinima
+    peakDetectMaxima = len(maxtab)
+    peakDetectMinima = len(mintab)
 
-if peakDetectMaxima != peakDetectMinima:
-    print 'Not equal number of minima and maxima. Try to adjust peakThreshold parameter'
-if peakDetectMaxima != maxHarmonic and peakDetectMinima != maxHarmonic:
-    print 'Number of structures found by FFT not equals the number of minima \
-            and maxima found by peakdetect(). Try to adjust peakThreshold parameter'
+    print 'Number of found maxima in first order difference data', peakDetectMaxima
+    print 'Number of found minima in first order difference data', peakDetectMinima
 
-maxtabDiff = np.diff(maxtab, axis=0)[:, 0]  #uses only 1st column
-mintabDiff = np.diff(mintab, axis=0)[:, 0]  #uses only 1st column
+    if peakDetectMaxima != peakDetectMinima:
+        print 'Number of minima and maxima is not equal. Try to adjust peak_threshold parameter'
+    if peakDetectMaxima != maxHarmonic and peakDetectMinima != maxHarmonic:
+        print 'Number of structures found by FFT not equals the number of minima \
+                and maxima found by peakdetect(). Try to adjust peakThreshold parameter'
 
-print 'Mean distance between structures from maxima', maxtabDiff.mean()
-print 'Mean distance between structures from minima', mintabDiff.mean()
+    maxtabDiff = np.diff(maxtab, axis=0)[:, 0]  #uses only 1st column
+    mintabDiff = np.diff(mintab, axis=0)[:, 0]  #uses only 1st column
+
+    print 'Mean distance between structures from maxima', maxtabDiff.mean()
+    print 'Mean distance between structures from minima', mintabDiff.mean()
+
+    return maxtab, mintab
+
+maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, 0.065)
 
 ##############################################################################
 ##Slicing
