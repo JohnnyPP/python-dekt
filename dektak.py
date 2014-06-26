@@ -363,22 +363,29 @@ def first_order_difference(data_to_analyze):
 
 xDiff, yDiff = first_order_difference(yLevelMovingAverage)
 
-##############################################################################
-##FFT filtering of the averaged difference data
+def FFT_filtering(x_data, y_data_to_filter, first_harmonics_to_keep):
+    """
+    Filters the data by means of FFT
+    :param x_data: used only for plot
+    :param y_data_to_filter: data to be filtered
+    :param first_harmonics_to_keep: the number of harmonics that are not set to 0 counting from the 0th harmonics
+    :return:
+    """
 
-FirstHarmonics = 1500  #only first 'FirstHarmonics' will be left in the FFT data
+    calculatedFFTFiltered = np.fft.rfft(y_data_to_filter)
+    calculatedFFTFiltered[first_harmonics_to_keep:] = 0  # any harmonics greater than 'FirstHarmonics' #are set to 0
+    yCalculatedIFFTFiltered = np.fft.irfft(calculatedFFTFiltered)  # calculate IFFT from the filtered FFT
 
-calculatedFFTFiltered = np.fft.rfft(yDiff)
-calculatedFFTFiltered[FirstHarmonics:] = 0  #any harmonics greater than 'FirstHarmonics' #are set to 0
-yCalculatedIFFTFiltered = np.fft.irfft(calculatedFFTFiltered)  #caclulate IFFT from the filtered FFT
+    plt.plot(x_data, yCalculatedIFFTFiltered, label='FFT filtered data')
+    plt.title('First order difference along the averaged levelled data')
+    plt.xlabel('Lateral [um]')
+    plt.ylabel('Raw Micrometer [um]')
+    plt.legend()
+    plt.grid(True)
 
-plt.plot(xDiff, yCalculatedIFFTFiltered, label='FFT filtered data')
-plt.title('First order difference along the averaged levelled data')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.legend()
-plt.grid(True)
-#plt.show()
+    return yCalculatedIFFTFiltered
+
+yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, 1500)
 
 ##############################################################################
 ##find the maxima and minima in FFT filtered data
