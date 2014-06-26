@@ -340,21 +340,28 @@ def amplitude_and_phase_FFT(data_to_analyze):
 
 averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
 
-###############################################################################
-##calculate first order difference along the averaged levelled data
 
-yDiff = np.diff(yLevelMovingAverage)
-dataLength = len(yLevelMovingAverage)
-xDiff = np.delete(x, dataLength - 1)  #diff consumes one last element from the array
+def first_order_difference(data_to_analyze):
+    """
+    Calculates the difference between subsequent data points in the data_to_analyze np.array
+    :param data_to_analyze: input np.array with the data
+    :return: xDiff, yDiff arrays with calculated data
+    """
 
-plt.figure('First order difference along the averaged levelled data')
-plt.plot(xDiff, yDiff, 'ko', markersize=2, label='Raw data')
-#plt.plot(xDiff,yDiff)
-plt.title('First order difference along the averaged levelled data')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.grid(True)
+    yDiff = np.diff(data_to_analyze)
+    dataLength = len(data_to_analyze)
+    xDiff = np.delete(x, dataLength - 1)  # diff consumes one last element from the array
+    plt.figure('First order difference along the averaged levelled data')
+    plt.plot(xDiff, yDiff, 'ko', markersize=2, label='Raw data')
+    plt.title('First order difference along the averaged levelled data')
+    plt.xlabel('Lateral [um]')
+    plt.ylabel('Raw Micrometer [um]')
+    plt.grid(True)
 
+    return xDiff, yDiff
+
+
+xDiff, yDiff = first_order_difference(yLevelMovingAverage)
 
 ##############################################################################
 ##FFT filtering of the averaged difference data
