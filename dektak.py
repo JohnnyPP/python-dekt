@@ -182,9 +182,11 @@ def FindThresholdLine(x, y, threshold, start):
 
 def load_data(file_name, file_path):
     """
-    Loads data from the dektak files
+    Loads data from the dektak csv file
+    :param file_name:
+    :param file_path:
+    :return: x, y raw data
     """
-
 
     #file_path = '/home/kolan/mycode/python/dektak/data/'
     # filename = '/home/kolan/mycode/python/dektak/data/t10_1_3_normal.csv'
@@ -218,45 +220,65 @@ file_path = '/home/kolan/mycode/python/dektak/data/'
 
 x, y = load_data(file_name, file_path)
 
-# #############################################################################
-##levelling of the surface tilt
-coefficients = np.polyfit(x, y, 2)
-polynomial = np.poly1d(coefficients)
-yPoly = polynomial(x)
 
-print 'Fitted line equation f(x) =', polynomial
+def surface_tilt_levelling(x, y):
+    """
+    Performs polynomial fit to the tilted profile and returns the difference between raw data and the fitted
+    curve what levels (straightens) the profile
+    :param x: raw data
+    :param y: raw data
+    :return: yLevelled levelled profile
+    """
 
-yLevelled = y - yPoly  #levelled line scan
+    coefficients = np.polyfit(x, y, 2)
+    polynomial = np.poly1d(coefficients)
+    yPoly = polynomial(x)
 
-plt.figure('Full raw data')
-plt.plot(x, y, label='Full raw data')
-plt.plot(x, yPoly, label='Polynomial')
-plt.title('Full raw data')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.legend()
-plt.grid(True)
-#plt.show()
+    print 'Fitted line equation f(x) =', polynomial
+
+    yLevelled = y - yPoly  # levelled line scan
+
+    plt.figure('Full raw data')
+    plt.plot(x, y, label='Full raw data')
+    plt.plot(x, yPoly, label='Polynomial')
+    plt.title('Full raw data')
+    plt.xlabel('Lateral [um]')
+    plt.ylabel('Raw Micrometer [um]')
+    plt.legend()
+    plt.grid(True)
+    #plt.show()
 
 
-plt.figure('Full data after levelling and averaging')
-plt.plot(x, yLevelled, 'ro', markersize=2, label='Raw data')
-plt.title('Full data after levelling and averaging')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.grid(True)
+    plt.figure('Full data after levelling and averaging')
+    plt.plot(x, yLevelled, 'ro', markersize=2, label='Raw data')
+    plt.title('Full data after levelling and averaging')
+    plt.xlabel('Lateral [um]')
+    plt.ylabel('Raw Micrometer [um]')
+    plt.grid(True)
 
-###############################################################################
-##calculate moving average of the levelled data
+    return yLevelled
 
-movingAverageSize = 277
-yLevelMovingAverage = scipy.medfilt(yLevelled, movingAverageSize)
+yLevelled = surface_tilt_levelling(x, y)
 
-plt.plot(x, yLevelMovingAverage, label='Moving average')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.legend()
-plt.grid(True)
+
+def moving_average(data_to_average, average_size):
+    """
+    Calculates moving average of the levelled data
+    :param data_to_average:
+    :param average_size:
+    :return:
+    """
+
+    yLevelMovingAverage = scipy.medfilt(data_to_average, average_size)
+    plt.plot(x, yLevelMovingAverage, label='Moving average')
+    plt.xlabel('Lateral [um]')
+    plt.ylabel('Raw Micrometer [um]')
+    plt.legend()
+    plt.grid(True)
+    return yLevelMovingAverage
+
+yLevelMovingAverage = moving_average(yLevelled, 277)
+
 
 ##############################################################################
 ##FFT amplitude and phase plot of the raw data after moving average
