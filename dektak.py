@@ -506,16 +506,16 @@ signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
 xIFFT = signalIFFT[:, 0]
 yIFFT = signalIFFT[:, 1]
 
+def slicing(x_data_to_slice, y_data, number_of_slices):
 
-for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
-    for sliceNumber in range(maxHarmonic):
+    for sliceNumber in range(number_of_slices):
 
-        indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
-        indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+        indexOfMaxOccurrence = np.where(x_data_to_slice > maxtab[sliceNumber][0])
+        indexOfMinOccurrence = np.where(x_data_to_slice > mintab[sliceNumber][0])
 
         start = indexOfMaxOccurrence[0][0] - increaseSliceLength
         stop = indexOfMinOccurrence[0][0] + increaseSliceLength
-        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
+        xShiftedToZero = x_data_to_slice[start:stop] - x_data_to_slice[start:stop][0]
 
         top = []
         bottom = []
@@ -524,8 +524,6 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
 
         #thresholdLenght=0.0
         #thresholdLenght=0.01
-
-
 
         aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep)
         aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop], thresholdStep)
@@ -540,7 +538,7 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
         ##############################################################################
         ##Translate the points found in Diff data to the xy data
 
-        xShiftedToZero = x[start:stop] - x[start:stop][0]
+        xShiftedToZero = x_data_to_slice[start:stop] - x_data_to_slice[start:stop][0]
 
         iyTop1 = np.where(xShiftedToZero > adecPositveLast[0][0])
         iyTop2 = np.where(xShiftedToZero > adecNegativeLast[0][0])
@@ -582,31 +580,122 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
         axs[sliceNumber].plot(xPointTop1, yPointTop1, 'bo')
         axs[sliceNumber].plot(xPointTop2, yPointTop2, 'bo')
         axs[sliceNumber].plot(xLineTop, yLineTop)
-        xShiftedToZero = x[start:stop] - x[start:stop][0]
+        xShiftedToZero = x_data_to_slice[start:stop] - x_data_to_slice[start:stop][0]
         axs[sliceNumber].plot(xShiftedToZero, yLevelled[start:stop])
         axs[sliceNumber].plot(xPointBottom1, yPointBottom1, 'ro')
         axs[sliceNumber].plot(xPointBottom2, yPointBottom2, 'ro')
         axs[sliceNumber].plot(xLineBottom, yLineBottom)
-        #plt.title('Data after levelling')
-        #plt.xlabel('Lateral [um]')
-        #plt.ylabel('Raw Micrometer [um]')
         axs[sliceNumber].grid(True)
         axs[sliceNumber].set_title(str(sliceNumber))
 
+    npWidthTop = np.array(widthTop)
+    npWidthBottom = np.array(widthBottom)
 
-    #plt.figure('Sliced structure')
-    #plt.plot(xPointTop1,yPointTop1,'bo')
-    #plt.plot(xPointTop2,yPointTop2,'bo')
-    #plt.plot(xLineTop,yLineTop)
-    #xShiftedToZero=x[start:stop]-x[start:stop][0]
-    #plt.plot(xShiftedToZero,yLevelled[start:stop])
-    #plt.plot(xPointBottom1,yPointBottom1,'ro')
-    #plt.plot(xPointBottom2,yPointBottom2,'ro')
-    #plt.plot(xLineBottom,yLineBottom)
-    #plt.title('Data after levelling')
-    #plt.xlabel('Lateral [um]')
-    #plt.ylabel('Raw Micrometer [um]')
-    #plt.grid(True)
+    print 'Mean top width:    ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+    print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+
+    stdWidthTop.append(np.std(npWidthTop))
+    stdWidthBottom.append(np.std(npWidthBottom))
+
+
+    return
+
+def translate_points(sliceNumber, x_data, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+                     aincNegativeLast):
+    """
+    Translate the points found in Diff data to the xy data for plotting the top and bottom lines
+    :param sliceNumber:
+    :param x_data:
+    :param start:
+    :param stop:
+    :param adecPositveLast:
+    :param adecNegativeLast:
+    :param aincPositveLast:
+    :param aincNegativeLast:
+    :return:
+    """
+
+    xShiftedToZero = x_data[start:stop] - x_data[start:stop][0]
+
+    iyTop1 = np.where(xShiftedToZero > adecPositveLast[0][0])
+    iyTop2 = np.where(xShiftedToZero > adecNegativeLast[0][0])
+
+    iyBottom1 = np.where(xShiftedToZero > aincPositveLast[0][0])
+    iyBottom2 = np.where(xShiftedToZero > aincNegativeLast[0][0])
+
+    xPointTop1 = iyTop1[0][0]
+    xPointTop2 = iyTop2[0][0]
+
+    xPointBottom1 = iyBottom1[0][0]
+    xPointBottom2 = iyBottom2[0][0]
+
+    yPointTop1 = yLevelled[start:stop][xPointTop1]
+    yPointTop2 = yLevelled[start:stop][xPointTop2]
+    yPointBottom1 = yLevelled[start:stop][xPointBottom1]
+    yPointBottom2 = yLevelled[start:stop][xPointBottom2]
+
+    xPointTop1 = adecPositveLast[0][0]
+    xPointTop2 = adecNegativeLast[0][0]
+    xPointBottom1 = aincPositveLast[0][0]
+    xPointBottom2 = aincNegativeLast[0][0]
+
+    xLineTop = []
+    yLineTop = []
+    xLineBottom = []
+    yLineBottom = []
+
+    xLineTop.append(xPointTop1)
+    xLineTop.append(xPointTop2)
+    yLineTop.append(yPointTop1)
+    yLineTop.append(yPointTop2)
+
+    xLineBottom.append(xPointBottom1)
+    xLineBottom.append(xPointBottom2)
+    yLineBottom.append(yPointBottom1)
+    yLineBottom.append(yPointBottom2)
+
+    axs[sliceNumber].plot(xPointTop1, yPointTop1, 'bo')
+    axs[sliceNumber].plot(xPointTop2, yPointTop2, 'bo')
+    axs[sliceNumber].plot(xLineTop, yLineTop)
+    xShiftedToZero = x[start:stop] - x[start:stop][0]
+    axs[sliceNumber].plot(xShiftedToZero, yLevelled[start:stop])
+    axs[sliceNumber].plot(xPointBottom1, yPointBottom1, 'ro')
+    axs[sliceNumber].plot(xPointBottom2, yPointBottom2, 'ro')
+    axs[sliceNumber].plot(xLineBottom, yLineBottom)
+    axs[sliceNumber].grid(True)
+    axs[sliceNumber].set_title(str(sliceNumber))
+
+    return None
+
+for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
+    for sliceNumber in range(maxHarmonic):
+
+        indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
+        indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+
+        start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+        stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
+
+        top = []
+        bottom = []
+
+        #thresholdLenght=0.0
+        #thresholdLenght=0.01
+
+        aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep)
+        aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop], thresholdStep)
+
+        abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+        atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+
+        widthBottom.append(abottom)
+        widthTop.append(atop)
+
+        translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+                         aincNegativeLast)
+
+
     npWidthTop = np.array(widthTop)
     npWidthBottom = np.array(widthBottom)
 
@@ -832,205 +921,4 @@ stdWidthTop.append(np.std(npWidthTop))
 stdWidthBottom.append(np.std(npWidthBottom))
 
 plt.show()
-
-
-
-
-#############################################################################
-##points without shifting
-
-
-#
-#iyTop1 = np.where(x>adecPositveLast[0][0])
-#iyTop2 = np.where(x>adecNegativeLast[0][0])
-#
-#iyBottom1 = np.where(x>aincPositveLast[0][0])
-#iyBottom2 = np.where(x>aincNegativeLast[0][0])
-#
-#xPointTop1 = iyTop1[0][0]
-#xPointTop2 = iyTop2[0][0]
-#
-#xPointBottom1 = iyBottom1[0][0]
-#xPointBottom2 = iyBottom2[0][0]
-#
-#yPointTop1 = yLevelled[xPointTop1]
-#yPointTop2 = yLevelled[xPointTop2]
-#yPointBottom1 = yLevelled[xPointBottom1]
-#yPointBottom2 = yLevelled[xPointBottom2]
-#
-#xPointTop1 = adecPositveLast[0][0]
-#xPointTop2 = adecNegativeLast[0][0]
-#xPointBottom1 = aincPositveLast[0][0]
-#xPointBottom2 = aincNegativeLast[0][0]
-#
-#xLineTop = []
-#yLineTop = []
-#xLineBottom = []
-#yLineBottom = []
-#
-#xLineTop.append(xPointTop1)
-#xLineTop.append(xPointTop2)
-#yLineTop.append(yPointTop1)
-#yLineTop.append(yPointTop2)
-#
-#xLineBottom.append(xPointBottom1)
-#xLineBottom.append(xPointBottom2)
-#yLineBottom.append(yPointBottom1)
-#yLineBottom.append(yPointBottom2)
-#
-#plt.figure('Sliced structure')
-#plt.plot(xPointTop1,yPointTop1,'bo')
-#plt.plot(xPointTop2,yPointTop2,'bo')
-#plt.plot(xLineTop,yLineTop)
-#xShiftedToZero=x[start:stop]-x[start:stop][0]
-#plt.plot(xShiftedToZero,yLevelled[start:stop])
-#plt.plot(xPointBottom1,yPointBottom1,'ro')
-#plt.plot(xPointBottom2,yPointBottom2,'ro')
-#plt.plot(xLineBottom,yLineBottom)
-#plt.title('Data after levelling')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-#
-#plt.show()
-#    
-
-#thresholded = np.array(diffMA)
-#x = np.where(thresholded == 0.05)[0]
-#print x
-#plt.figure('Derivative with moving average thresholded')
-#plt.plot(thresholded)
-#plt.title('Derivative with moving average')
-#plt.xlabel('Sample []')
-#plt.ylabel('Micrometer [um]')
-#plt.grid(True)
-#
-#itemindex = np.where(diffMA > 0.05 and diffMA < 0.051)
-
-##############################################################################
-##second diff
-#diff2x=np.diff(calculatedIFFTFiltered)
-##plt.plot(xDiff,d,'ko', markersize=2)
-#plt.figure("Second diff")
-#plt.plot(diff2x)
-#plt.title('Second derivative of y')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-
-##############################################################################
-##Peak detect
-#print "detecting peaks"
-#peakind = signal.find_peaks_cwt(calculatedIFFTFiltered, np.arange(100,300))
-#peakindxDiff = xDiff[peakind]
-#peakindy = calculatedIFFTFiltered[peakind]
-
-#Za kumuny chociaz niczego nie bylo to wszystko bylo a teraz wszystko jest ale nic nie ma
-
-
-
-
-#if __name__=="__main__":
-#    from matplotlib.pyplot import plot, scatter, show
-#    series = [0,0,0,2,0,0,0,-2,0,0,0,2,0,0,0,-2,0]
-#    maxtab, mintab = peakdet(series,.3)
-#    plot(series)
-#    scatter(array(maxtab)[:,0], array(maxtab)[:,1], color='blue')
-#    scatter(array(mintab)[:,0], array(mintab)[:,1], color='red')
-#    show()
-
-##############################################################################
-##IFFT plot
-
-
-#plt.plot(xIFFT,yIFFT)
-
-##############################################################################
-
-#plt.plot(signalFFT[:,0],scipy.medfilt(signalFFT[:,1],15))
-
-#thresholdStd = np.linspace(calculatedIFFTFiltered.std(),calculatedIFFTFiltered.std(),xDiff.max())
-#plt.plot(thresholdStd)
-#plt.plot(2*thresholdStd)
-#plt.plot(3*thresholdStd)
-#plt.plot(-thresholdStd)
-#plt.plot(-2*thresholdStd)
-#plt.plot(-3*thresholdStd)
-#plt.plot(xDiff[920:1320],calculatedIFFTFiltered[920:1320])
-
-#diff3x=np.diff(calculatedIFFTFiltered[920:1320])
-##plt.figure(1)
-#plt.plot(calculatedIFFTFiltered[920:1320])
-##plt.figure(2)
-#xDiffAbs = np.absolute(diff3x)
-#plt.plot(30*xDiffAbs)
-#plt.grid(True)
-
-##############################################################################
-##find threshold line
-
-#threshold = 0.035
-#
-#aincPositve, adecPositve = FindThresholdLine(xDiff,y,threshold)
-#increasingPoints = []
-#incLineEquationCoefficients = []
-#incIntersectionPoints = []
-#decLineEquationCoefficients = []
-#decreasingPoints = []
-#decIntersectionPoints = []
-#aincNegative, adecNegative = FindThresholdLine(xDiff,y,-threshold)
-
-##############################################################################
-
-
-
-
-#aincPositve, adecPositve = FindThresholdLine(xIFFT[:2500],yIFFT[:2500],0.019)
-
-
-#the question is should the slices move along x or should they start always from 0
-#shift the x array to 0
-#start = 2500
-#stop = 4500
-
-#start = 4500
-#stop = 6500
-
-#start = 6500
-#stop = 8500
-#
-#start = 8500
-#stop = 10500
-
-
-
-#
-##plt.figure('Data after median')
-#plt.plot(x, scipy.medfilt(yLevelled,177))
-#plt.title('Data after median')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-
-
-###FFT and IFFT of the raw signall
-#FirstHarmonicsRaw=500
-#
-#calculatedFFTRaw = np.fft.rfft(yLevelled) 
-#calculatedFFTFilteredRaw = calculatedFFTRaw
-#calculatedFFTFilteredRaw[FirstHarmonicsRaw:]=0
-#calculatedIFFTFilteredRaw = np.fft.irfft(calculatedFFTFilteredRaw)
-#
-#plt.figure('Raw Data after FFT filtering')
-#plt.plot(calculatedIFFTFilteredRaw)
-#plt.title('Raw Data after FFT filtering')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.grid(True)
-
-##############################################################################
-##THRESHOLD
-##############################################################################
-#threshold=-0.05
-
 
