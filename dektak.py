@@ -27,9 +27,9 @@ filename = '/home/kolan/mycode/python/dektak/data/t10_1_1_normal.csv'
 
 def FindHeaderLength():
     """
-    Finds the positionon the 'Scan Data' and adds additional 4 lines
-    to give as a result the lenght of the header in number of lines.
-    This is then used in csv function
+    Finds the position of the 'Scan Data' and adds additional 4 lines
+    to give as a result the length of the header in number of lines.
+    This is then used in np.loadtxt function
     """
 
     lookup = 'Lateral um'
