@@ -419,7 +419,7 @@ def find_minima_and_maxima(xdata, ydata, peak_threshold):
     return maxtab, mintab
 
 
-def scanning_threshold_positive(x_data, y_data, threshold_step):
+def scanning_threshold_positive(x_data, y_data, threshold_step, threshold_length):
     """
     Function scans the positive peak with the given threshold step
     :param x_data:
@@ -431,7 +431,7 @@ def scanning_threshold_positive(x_data, y_data, threshold_step):
     for threshold in reversed(np.arange(0, 0.15, threshold_step)):
         aincPositve, adecPositve = FindThresholdLine(x_data, y_data, threshold)
         if aincPositve.__len__() >= 2 or adecPositve.__len__() >= 2:
-            if maxtab[sliceNumber][1] - threshold < thresholdLength:
+            if maxtab[sliceNumber][1] - threshold < threshold_length:
                 print 'Entered threshold length case positive peaks'
                 print maxtab[sliceNumber][1] - threshold
                 print sliceNumber
@@ -442,7 +442,7 @@ def scanning_threshold_positive(x_data, y_data, threshold_step):
     return aincPositveLast, adecPositveLast
 
 
-def scanning_threshold_negative(x_data, y_data, threshold_step):
+def scanning_threshold_negative(x_data, y_data, threshold_step, threshold_length):
     """
     Function scans the negative peak with the given threshold step
     :param x_data:
@@ -451,17 +451,17 @@ def scanning_threshold_negative(x_data, y_data, threshold_step):
     :return:
     """
 
-    for threshold in reversed(np.arange(0, 0.15, thresholdStep)):
-        aincNegative, adecNegative = FindThresholdLine(xShiftedToZero, yIFFT[start:stop], -threshold)
+    for threshold in reversed(np.arange(0, 0.15, threshold_step)):
+        aincNegative, adecNegative = FindThresholdLine(x_data, y_data, -threshold)
         if aincNegative.__len__() >= 2 or adecNegative.__len__() >= 2:
-            if mintab[sliceNumber][1] + threshold > -thresholdLength:
+            if mintab[sliceNumber][1] + threshold > -threshold_length:
                 print 'Entered threshold length case negative peaks'
                 print mintab[sliceNumber][1] + threshold
                 print sliceNumber
                 print -threshold
             else:
                 aincNegativeLast, adecNegativeLast = FindThresholdLine(xShiftedToZero, yIFFT[start:stop],
-                                                                       -threshold - thresholdStep)
+                                                                       -threshold - threshold_step)
                 break
     return aincNegativeLast, adecNegativeLast
 
@@ -537,6 +537,7 @@ Translate the points found in Diff data to the xy data for plotting the top and 
 #######################################################################################################################
 
 file_name = 't10_1_3_normal.csv'
+
 file_path = '/home/kolan/mycode/python/dektak/data/'
 
 x, y = load_data(file_name, file_path)
@@ -594,8 +595,10 @@ for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
         #thresholdLenght=0.0
         #thresholdLenght=0.01
 
-        aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep)
-        aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop], thresholdStep)
+        aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
+                                                                       thresholdLength)
+        aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
+                                                                         thresholdStep, thresholdLength)
 
         abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
         atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
