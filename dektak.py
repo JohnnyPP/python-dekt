@@ -628,8 +628,6 @@ def main():
 
     plt.figure('Std+std')
     plt.plot(npStdWidthTop + npStdWidthBottom)
-    plt.figure('Std*std')
-    plt.plot(npStdWidthTop * npStdWidthBottom)
 
     sumWidth = npStdWidthTop + npStdWidthBottom
     minThresholdLength = np.where(sumWidth == sumWidth.min())[0][0] * thresholdLengthStep

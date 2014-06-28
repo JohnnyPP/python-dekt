@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1b21b61f-162f-4fdf-b18a-5ad7a6a28eb4" name="Default" comment="Break thresholdLength for loop if np.std(npWidthTop) &gt; 5 or np.std(npWidthBottom) &gt; 5" />
+    <list default="true" id="1b21b61f-162f-4fdf-b18a-5ad7a6a28eb4" name="Default" comment="Break thresholdLength for loop if np.std(npWidthTop) &gt; 5 or np.std(npWidthBottom) &gt; 5">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dektak.py" afterPath="$PROJECT_DIR$/dektak.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <ignored path="dektak.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,8 +29,8 @@
       <file leaf-file-name="dektak.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dektak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6274834" vertical-offset="2006" max-vertical-offset="3150">
-              <caret line="646" column="79" selection-start-line="646" selection-start-column="18" selection-end-line="646" selection-end-column="79" />
+            <state vertical-scroll-proportion="0.83919597" vertical-offset="1781" max-vertical-offset="3120">
+              <caret line="628" column="16" selection-start-line="628" selection-start-column="16" selection-end-line="628" selection-end-column="23" />
               <folding>
                 <element signature="e#214#734#0" expanded="false" />
                 <element signature="e#772#2745#0" expanded="false" />
@@ -340,7 +343,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="0" width="1368" height="744" extended-state="7" />
+    <frame x="-1" y="0" width="1368" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3280507" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -351,7 +354,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936803" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32646593" sideWeight="0.50037175" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32646593" sideWeight="0.49962825" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32646593" sideWeight="0.49962825" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290938" sideWeight="0.49962825" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -388,6 +391,31 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/dektak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2006" max-vertical-offset="3150">
+          <caret line="646" column="79" selection-start-line="646" selection-start-column="18" selection-end-line="646" selection-end-column="79" />
+          <folding>
+            <element signature="e#214#734#0" expanded="false" />
+            <element signature="e#772#2745#0" expanded="false" />
+            <element signature="e#2779#2808#0" expanded="false" />
+            <element signature="e#2842#2880#0" expanded="false" />
+            <element signature="e#2928#6272#0" expanded="false" />
+            <element signature="e#6316#8416#0" expanded="false" />
+            <element signature="e#8457#9482#0" expanded="false" />
+            <element signature="e#9548#9993#0" expanded="false" />
+            <element signature="e#10046#12475#0" expanded="false" />
+            <element signature="e#12535#13246#0" expanded="false" />
+            <element signature="e#13323#14155#0" expanded="false" />
+            <element signature="e#14234#15541#0" expanded="false" />
+            <element signature="e#15652#16521#0" expanded="false" />
+            <element signature="e#15652#15808#1" expanded="false" />
+            <element signature="e#16632#17547#0" expanded="false" />
+            <element signature="e#17717#19748#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dektak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3825">
@@ -679,8 +707,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dektak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6274834" vertical-offset="2006" max-vertical-offset="3150">
-          <caret line="646" column="79" selection-start-line="646" selection-start-column="18" selection-end-line="646" selection-end-column="79" />
+        <state vertical-scroll-proportion="0.83919597" vertical-offset="1781" max-vertical-offset="3120">
+          <caret line="628" column="16" selection-start-line="628" selection-start-column="16" selection-end-line="628" selection-end-column="23" />
           <folding>
             <element signature="e#214#734#0" expanded="false" />
             <element signature="e#772#2745#0" expanded="false" />
