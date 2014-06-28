@@ -619,9 +619,9 @@ def main():
     print stdWidthTop
     print stdWidthBottom
 
-    plt.figure('Std')
-    plt.plot(stdWidthTop)
-    plt.plot(stdWidthBottom)
+    #plt.figure('Std')
+    #plt.plot(stdWidthTop)
+    #plt.plot(stdWidthBottom)
 
     npStdWidthTop = np.array(stdWidthTop)
     npStdWidthBottom = np.array(stdWidthBottom)
