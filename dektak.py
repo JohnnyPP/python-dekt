@@ -538,7 +538,7 @@ def main():
     #######################################################################################################################
     #######################################################################################################################
 
-    file_name = 't10_1_1_normal.csv'
+    file_name = 't10_1_3_normal.csv'
 
     file_path = '/home/kolan/mycode/python/dektak/data/'
 
@@ -640,6 +640,11 @@ def main():
     widthBottom = []
     stdWidthTop = []
     stdWidthBottom = []
+
+    fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
+    fig.subplots_adjust(hspace=.5, wspace=.2)
+    axs = axs.ravel()
+    plt.suptitle('Sliced structures last: x Lateral [um], y Raw Micrometer [um]')
 
     for sliceNumber in range(maxHarmonic):
 
