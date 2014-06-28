@@ -558,8 +558,7 @@ def main():
 
     ##############################################################################
     ##Slicing
-    increaseSliceLength = 200 #this is in index
-    #sliceNumber = 17
+    increaseSliceLength = 200 # this is in index
 
     widthTop = []
     widthBottom = []
@@ -570,8 +569,6 @@ def main():
     fig.subplots_adjust(hspace=.5, wspace=.2)
     axs = axs.ravel()
     plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
-
-    #thresholdLength=0.03
 
     thresholdLengthStep = 0.002
 
@@ -590,12 +587,6 @@ def main():
             start = indexOfMaxOccurrence[0][0] - increaseSliceLength
             stop = indexOfMinOccurrence[0][0] + increaseSliceLength
             xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-            top = []
-            bottom = []
-
-            #thresholdLenght=0.0
-            #thresholdLenght=0.01
 
             aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
                                                                            thresholdLength, maxtab, sliceNumber)
@@ -664,10 +655,6 @@ def main():
         yIFFT = signalIFFT[:, 1]
 
         xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-
-        #thresholdLenght=0.0
-        #thresholdLenght=0.01
 
         aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
                                                                            minThresholdLength, maxtab, sliceNumber)
