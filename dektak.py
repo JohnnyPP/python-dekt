@@ -134,9 +134,11 @@ def FindThresholdLine(x, y, threshold):
             else:
                 if y[i] > threshold and y[i + 1] < threshold:  # decreasing
                     #print "Decreasing line detected"
-                    x0 = xDiff[i]
+                    #x0 = xDiff[i]
+                    x0 = x[i]
                     y0 = y[i]
-                    x1 = xDiff[i + 1]
+                    #x1 = xDiff[i + 1]
+                    x1 = x[i + 1]
                     y1 = y[i + 1]
                     coefAdec = coefA(x0, y0, x1, y1)
                     coefCdec = coefC(x0, y0, x1, y1)
