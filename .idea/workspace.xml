@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1b21b61f-162f-4fdf-b18a-5ad7a6a28eb4" name="Default" comment="Break thresholdLength for loop if np.std(npWidthTop) &gt; 5 or np.std(npWidthBottom) &gt; 5">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/temp/space top and bottom.png" afterPath="$PROJECT_DIR$/temp/space top and bottom.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dektak.py" afterPath="$PROJECT_DIR$/dektak.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="dektak.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -28,8 +30,8 @@
       <file leaf-file-name="dektak.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/dektak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.30463576" vertical-offset="1826" max-vertical-offset="3120">
-              <caret line="621" column="18" selection-start-line="621" selection-start-column="18" selection-end-line="621" selection-end-column="18" />
+            <state vertical-scroll-proportion="-3.6180904" vertical-offset="2745" max-vertical-offset="3165">
+              <caret line="574" column="17" selection-start-line="574" selection-start-column="4" selection-end-line="574" selection-end-column="17" />
               <folding>
                 <element signature="e#214#734#0" expanded="false" />
                 <element signature="e#772#2745#0" expanded="false" />
@@ -70,9 +72,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1" />
-    <option name="width" value="1368" />
-    <option name="height" value="744" />
+    <option name="width" value="1366" />
+    <option name="height" value="743" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -88,7 +89,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -99,19 +100,7 @@
       <autoscrollFromSource />
       <sortByType />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="dektak" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="options.lastSelected" value="settings.github" />
@@ -158,7 +147,9 @@
       <module name="dektak" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/dektak.py" />
       <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PyDebugRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -342,18 +333,18 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1" y="0" width="1368" height="744" extended-state="6" />
+    <frame x="0" y="0" width="1366" height="743" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3280507" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3296355" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290938" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18364312" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3280507" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.183172" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24981412" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3984127" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32936803" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32646593" sideWeight="0.50037175" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32646593" sideWeight="0.49962825" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32539684" sideWeight="0.49962825" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3290938" sideWeight="0.49962825" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -386,10 +377,113 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/dektak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4125">
+          <caret line="677" column="46" selection-start-line="677" selection-start-column="46" selection-end-line="677" selection-end-column="46" />
+          <folding>
+            <element signature="e#214#734#0" expanded="false" />
+            <element signature="e#772#2745#0" expanded="false" />
+            <element signature="e#2779#2808#0" expanded="false" />
+            <element signature="e#2842#2880#0" expanded="false" />
+            <element signature="e#2928#6272#0" expanded="false" />
+            <element signature="e#6316#8416#0" expanded="false" />
+            <element signature="e#8457#9482#0" expanded="false" />
+            <element signature="e#9548#9993#0" expanded="false" />
+            <element signature="e#10046#12475#0" expanded="false" />
+            <element signature="e#12535#13246#0" expanded="false" />
+            <element signature="e#13323#14155#0" expanded="false" />
+            <element signature="e#14234#15541#0" expanded="false" />
+            <element signature="e#15652#16521#0" expanded="false" />
+            <element signature="e#15652#15808#1" expanded="false" />
+            <element signature="e#16632#17547#0" expanded="false" />
+            <element signature="e#17717#19748#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dektak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4125">
+          <caret line="672" column="61" selection-start-line="672" selection-start-column="61" selection-end-line="672" selection-end-column="61" />
+          <folding>
+            <element signature="e#214#734#0" expanded="false" />
+            <element signature="e#772#2745#0" expanded="false" />
+            <element signature="e#2779#2808#0" expanded="false" />
+            <element signature="e#2842#2880#0" expanded="false" />
+            <element signature="e#2928#6272#0" expanded="false" />
+            <element signature="e#6316#8416#0" expanded="false" />
+            <element signature="e#8457#9482#0" expanded="false" />
+            <element signature="e#9548#9993#0" expanded="false" />
+            <element signature="e#10046#12475#0" expanded="false" />
+            <element signature="e#12535#13246#0" expanded="false" />
+            <element signature="e#13323#14155#0" expanded="false" />
+            <element signature="e#14234#15541#0" expanded="false" />
+            <element signature="e#15652#16521#0" expanded="false" />
+            <element signature="e#15652#15808#1" expanded="false" />
+            <element signature="e#16632#17547#0" expanded="false" />
+            <element signature="e#17717#19748#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dektak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3120">
+          <caret line="540" column="24" selection-start-line="540" selection-start-column="24" selection-end-line="540" selection-end-column="24" />
+          <folding>
+            <element signature="e#214#734#0" expanded="false" />
+            <element signature="e#772#2745#0" expanded="false" />
+            <element signature="e#2779#2808#0" expanded="false" />
+            <element signature="e#2842#2880#0" expanded="false" />
+            <element signature="e#2928#6272#0" expanded="false" />
+            <element signature="e#6316#8416#0" expanded="false" />
+            <element signature="e#8457#9482#0" expanded="false" />
+            <element signature="e#9548#9993#0" expanded="false" />
+            <element signature="e#10046#12475#0" expanded="false" />
+            <element signature="e#12535#13246#0" expanded="false" />
+            <element signature="e#13323#14155#0" expanded="false" />
+            <element signature="e#14234#15541#0" expanded="false" />
+            <element signature="e#15652#16521#0" expanded="false" />
+            <element signature="e#15652#15808#1" expanded="false" />
+            <element signature="e#16632#17547#0" expanded="false" />
+            <element signature="e#17717#19748#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dektak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3120">
+          <caret line="540" column="24" selection-start-line="540" selection-start-column="24" selection-end-line="540" selection-end-column="24" />
+          <folding>
+            <element signature="e#214#734#0" expanded="false" />
+            <element signature="e#772#2745#0" expanded="false" />
+            <element signature="e#2779#2808#0" expanded="false" />
+            <element signature="e#2842#2880#0" expanded="false" />
+            <element signature="e#2928#6272#0" expanded="false" />
+            <element signature="e#6316#8416#0" expanded="false" />
+            <element signature="e#8457#9482#0" expanded="false" />
+            <element signature="e#9548#9993#0" expanded="false" />
+            <element signature="e#10046#12475#0" expanded="false" />
+            <element signature="e#12535#13246#0" expanded="false" />
+            <element signature="e#13323#14155#0" expanded="false" />
+            <element signature="e#14234#15541#0" expanded="false" />
+            <element signature="e#15652#16521#0" expanded="false" />
+            <element signature="e#15652#15808#1" expanded="false" />
+            <element signature="e#16632#17547#0" expanded="false" />
+            <element signature="e#17717#19748#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dektak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2006" max-vertical-offset="3150">
@@ -706,8 +800,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dektak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.30463576" vertical-offset="1826" max-vertical-offset="3120">
-          <caret line="621" column="18" selection-start-line="621" selection-start-column="18" selection-end-line="621" selection-end-column="18" />
+        <state vertical-scroll-proportion="-3.6180904" vertical-offset="2745" max-vertical-offset="3165">
+          <caret line="574" column="17" selection-start-line="574" selection-start-column="4" selection-end-line="574" selection-end-column="17" />
           <folding>
             <element signature="e#214#734#0" expanded="false" />
             <element signature="e#772#2745#0" expanded="false" />

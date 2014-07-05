@@ -538,7 +538,7 @@ def main():
     #######################################################################################################################
     #######################################################################################################################
 
-    file_name = 't10_1_3_normal.csv'
+    file_name = 't10_1_1_normal.csv'
 
     file_path = '/home/kolan/mycode/python/dektak/data/'
 
@@ -668,6 +668,9 @@ def main():
         abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
         atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
 
+        #need to save the current and next peak
+        #this is done in the list
+        #after each odd sliceNumber the list need to be reset
         widthBottom.append(abottom)
         widthTop.append(atop)
 
