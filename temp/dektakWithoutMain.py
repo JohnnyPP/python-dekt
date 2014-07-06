@@ -533,185 +533,226 @@ Translate the points found in Diff data to the xy data for plotting the top and 
 
     return None
 
-def main():
+def calculate_start_slice(x_axis, start_slice): 
+    # calculates the position of the start slice in um.This is used to
+    # translate the position of the points from slices to the whole plot
+    start_slice_list.append(x_axis[start_slice])
+    return start_slice_list
+    
 
-    #######################################################################################################################
-    #######################################################################################################################
+#######################################################################################################################
+#######################################################################################################################
 
-    file_name = 't10_1_1_normal.csv'
+file_name = 't10_1_1_normal.csv'
+file_path = '/home/kolan/mycode/python/dektak/data/'
 
-    file_path = '/home/kolan/mycode/python/dektak/data/'
+x, y = load_data(file_name, file_path)
 
-    x, y = load_data(file_name, file_path)
+yLevelled = surface_tilt_levelling(x, y)
 
-    yLevelled = surface_tilt_levelling(x, y)
+yLevelMovingAverage = moving_average(x, yLevelled, 277)
 
-    yLevelMovingAverage = moving_average(x, yLevelled, 277)
+averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
 
-    averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
+xDiff, yDiff = first_order_difference(x, yLevelMovingAverage)
 
-    xDiff, yDiff = first_order_difference(x, yLevelMovingAverage)
+yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, 1500)
 
-    yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, 1500)
+maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, 0.065, maxHarmonic)
 
-    maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, 0.065, maxHarmonic)
+##############################################################################
+##Slicing
+increaseSliceLength = 200 # this is in index
 
-    ##############################################################################
-    ##Slicing
-    increaseSliceLength = 200 # this is in index
+widthTop = []
+widthBottom = []
+stdWidthTop = []
+stdWidthBottom = []
+spaceTop = []
+spaceBottom = []
+start_slice_list = []
+adecNegativeLastList = []
+aincNegativeLastList = []
+adecPositveLastList = []
+aincPositveLastList = []
+yAdecNegativeLastList = []
+yAincNegativeLastList = []
+yAdecPositveLastList = []
+yAincPositveLastList = []
+xlineListTop = []
+xlineListBottom = []
+ylineListTop = []
+ylineListBottom = []
 
-    widthTop = []
-    widthBottom = []
-    stdWidthTop = []
-    stdWidthBottom = []
-    spaceTop = []
-    spaceBottom = []
+fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
+fig.subplots_adjust(hspace=.5, wspace=.2)
+axs = axs.ravel()
+plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
-    fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
-    fig.subplots_adjust(hspace=.5, wspace=.2)
-    axs = axs.ravel()
-    plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
+thresholdLengthStep = 0.002
 
-    thresholdLengthStep = 0.002
+thresholdStep = 0.001
+signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
+xIFFT = signalIFFT[:, 0]
+yIFFT = signalIFFT[:, 1]
 
+'''
+for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
+    for sliceNumber in range(maxHarmonic):
+
+       indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
+       indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+
+       start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+       stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+       xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
+
+       aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
+                                                                           thresholdLength, maxtab, sliceNumber)
+       aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
+                                                                             thresholdStep, thresholdLength, mintab,
+                                                                             sliceNumber)
+
+       abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+       atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+
+       widthBottom.append(abottom)
+       widthTop.append(atop)
+
+       translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+                             aincNegativeLast, yLevelled, axs)
+                        
+        
+    npWidthTop = np.array(widthTop)
+    npWidthBottom = np.array(widthBottom)
+
+    print 'Mean top width: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+    print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+
+    stdWidthTop.append(np.std(npWidthTop))
+    stdWidthBottom.append(np.std(npWidthBottom))
+
+    if np.std(npWidthTop) > 4 or np.std(npWidthBottom) > 4:
+        break
+
+print stdWidthTop
+print stdWidthBottom
+
+
+npStdWidthTop = np.array(stdWidthTop)
+npStdWidthBottom = np.array(stdWidthBottom)
+
+plt.figure('Std+std')
+plt.plot(npStdWidthTop + npStdWidthBottom)
+
+sumWidth = npStdWidthTop + npStdWidthBottom
+minThresholdLength = np.where(sumWidth == sumWidth.min())[0][0] * thresholdLengthStep
+
+print 'Min threshold length', minThresholdLength
+
+widthTop = []
+widthBottom = []
+stdWidthTop = []
+stdWidthBottom = []
+
+fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
+fig.subplots_adjust(hspace=.5, wspace=.2)
+axs = axs.ravel()
+plt.suptitle('Sliced structures last: x Lateral [um], y Raw Micrometer [um]')
+'''
+
+minThresholdLength = 0
+
+for sliceNumber in range(maxHarmonic):
+
+    indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
+    indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+
+    start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+    stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+    
+    start_slice_list = calculate_start_slice(x, start)
+    
     thresholdStep = 0.001
     signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
     xIFFT = signalIFFT[:, 0]
     yIFFT = signalIFFT[:, 1]
 
-    '''
-    for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
-        for sliceNumber in range(maxHarmonic):
+    xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
 
-            indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
-            indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
-
-            start = indexOfMaxOccurrence[0][0] - increaseSliceLength
-            stop = indexOfMinOccurrence[0][0] + increaseSliceLength
-            xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-            aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
-                                                                           thresholdLength, maxtab, sliceNumber)
-            aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
-                                                                             thresholdStep, thresholdLength, mintab,
-                                                                             sliceNumber)
-
-            abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-            atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
-
-            widthBottom.append(abottom)
-            widthTop.append(atop)
-
-            translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
-                             aincNegativeLast, yLevelled, axs)
-
-
-        npWidthTop = np.array(widthTop)
-        npWidthBottom = np.array(widthBottom)
-
-        print 'Mean top width: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-        print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
-
-        stdWidthTop.append(np.std(npWidthTop))
-        stdWidthBottom.append(np.std(npWidthBottom))
-
-        if np.std(npWidthTop) > 4 or np.std(npWidthBottom) > 4:
-            break
-
-    print stdWidthTop
-    print stdWidthBottom
-
-    #plt.figure('Std')
-    #plt.plot(stdWidthTop)
-    #plt.plot(stdWidthBottom)
-
-    npStdWidthTop = np.array(stdWidthTop)
-    npStdWidthBottom = np.array(stdWidthBottom)
-
-    plt.figure('Std+std')
-    plt.plot(npStdWidthTop + npStdWidthBottom)
-
-    sumWidth = npStdWidthTop + npStdWidthBottom
-    minThresholdLength = np.where(sumWidth == sumWidth.min())[0][0] * thresholdLengthStep
-
-    print 'Min threshold length', minThresholdLength
-
-    widthTop = []
-    widthBottom = []
-    stdWidthTop = []
-    stdWidthBottom = []
-
-    fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
-    fig.subplots_adjust(hspace=.5, wspace=.2)
-    axs = axs.ravel()
-    plt.suptitle('Sliced structures last: x Lateral [um], y Raw Micrometer [um]')
-    '''
-    minThresholdLength = 0
-
-    for sliceNumber in range(maxHarmonic):
-
-        indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
-        indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
-
-        start = indexOfMaxOccurrence[0][0] - increaseSliceLength
-        stop = indexOfMinOccurrence[0][0] + increaseSliceLength
-
-        thresholdStep = 0.001
-        signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
-        xIFFT = signalIFFT[:, 0]
-        yIFFT = signalIFFT[:, 1]
-
-        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-        aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
+    aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
                                                                            minThresholdLength, maxtab, sliceNumber)
-        aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
+    aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
                                                                              thresholdStep, minThresholdLength, mintab,
                                                                              sliceNumber)
 
-        abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-        atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+    abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+    atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
 
         #need to save the current and next peak
         #this is done in the list
         #after each odd sliceNumber the list need to be reset
-        spaceTop.append(adecNegativeLast[0][0])
-        spaceBottom.append(aincNegativeLast[0][0])
 
-        spaceTopCurrent = adecNegativeLast[0][0]
-        spaceBottomCurrent = aincNegativeLast[0][0]
+    adecNegativeLastList.append(adecNegativeLast[0][0] + start_slice_list[sliceNumber])
+    aincNegativeLastList.append(aincNegativeLast[0][0] + start_slice_list[sliceNumber])
+    adecPositveLastList.append(adecPositveLast[0][0] + start_slice_list[sliceNumber])
+    aincPositveLastList.append(aincPositveLast[0][0] + start_slice_list[sliceNumber])
+    
+    yAdecNegativeLastList.append(yLevelled[np.where(x > adecNegativeLastList[sliceNumber])[0][0]])
+    yAincNegativeLastList.append(yLevelled[np.where(x > aincNegativeLastList[sliceNumber])[0][0]])
+    yAdecPositveLastList.append(yLevelled[np.where(x > adecPositveLastList[sliceNumber])[0][0]])
+    yAincPositveLastList.append(yLevelled[np.where(x > aincPositveLastList[sliceNumber])[0][0]])
 
+    widthBottom.append(abottom)
+    widthTop.append(atop)
 
-        if sliceNumber & 1:         # checks if the sliceNumber is odd
-            spaceTopNext = adecPositveLast[0][0]
-            spaceBottomNext = aincPositveLast[0][0]
-            spaceTop.append(spaceTopNext - spaceTopCurrent)
-            spaceBottom.append(spaceBottomNext - spaceBottomCurrent)
-
-
-
-
-        widthBottom.append(abottom)
-        widthTop.append(atop)
-
-        translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+    translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
                              aincNegativeLast, yLevelled, axs)
                              
+for i in range(maxHarmonic-1):
+    spaceTop.append(aincPositveLastList[i+1]-aincNegativeLastList[i])
+    spaceBottom.append(adecPositveLastList[i+1]-adecNegativeLastList[i])
+
+for i in range(maxHarmonic):
+    xlineListTop.append(adecNegativeLastList[i])
+    xlineListTop.append(adecPositveLastList[i])
+    xlineListBottom.append(aincNegativeLastList[i])
+    xlineListBottom.append(aincPositveLastList[i])
+    
+    ylineListTop.append(yAdecNegativeLastList[i])
+    ylineListTop.append(yAdecPositveLastList[i])
+    ylineListBottom.append(yAincNegativeLastList[i])
+    ylineListBottom.append(yAincPositveLastList[i])
     
 
-    npWidthTop = np.array(widthTop)
-    npWidthBottom = np.array(widthBottom)
+npWidthTop = np.array(widthTop)
+npWidthBottom = np.array(widthBottom)
+npSpaceTop = np.array(spaceTop)
+npSpaceBottom = np.array(spaceBottom)
 
-    print 'Mean top width with threshold length: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-    print 'Mean bottom width with threshold length: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+print 'Mean top width with threshold length: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+print 'Mean bottom width with threshold length: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
 
-    print 'Space top:', spaceTop
-    print 'Space bottom:', spaceBottom
+print 'Mean space top width with threshold length: ', np.mean(npSpaceTop), '+/-', np.std(npSpaceTop), 'um'
+print 'Mean space bottom width with threshold length: ', np.mean(npSpaceBottom), '+/-', np.std(npSpaceBottom), 'um'
 
-    stdWidthTop.append(np.std(npWidthTop))
-    stdWidthBottom.append(np.std(npWidthBottom))
+stdWidthTop.append(np.std(npWidthTop))
+stdWidthBottom.append(np.std(npWidthBottom))
 
-    plt.show()
+plt.figure('Full raw data with points')
+plt.plot(x, yLevelled, 'g')
+plt.plot(adecNegativeLastList, yAdecNegativeLastList, 'bo')
+plt.plot(aincNegativeLastList, yAincNegativeLastList, 'ro')
+plt.plot(adecPositveLastList, yAdecPositveLastList, 'bo')
+plt.plot(aincPositveLastList, yAincPositveLastList, 'ro')
 
-if __name__ == "__main__":
-    main()
+plt.plot(xlineListTop, ylineListTop)
+plt.plot(xlineListBottom, ylineListBottom)
+
+plt.title('Full raw data')
+plt.xlabel('Lateral [um]')
+plt.ylabel('Raw Micrometer [um]')
+plt.legend()
+plt.grid(True)
+
+plt.show()
