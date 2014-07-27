@@ -5,7 +5,6 @@ import sys
 import math
 from numpy import NaN, Inf, arange, isscalar, asarray, array
 
-
 def FindHeaderLength(file_path, file_name):
     """
     Finds the position of the 'Scan Data' and adds additional 4 lines
@@ -99,15 +98,64 @@ def peakdet(v, delta, x=None):
 
 
 def coefA(x0, y0, x1, y1):
+    """
+    Finds the coefficient A of the line going thorugh the two points P0 (x0,y0),
+    P1 (x1,y1). Run dektakTest.py for a simple example
+    :param x0: 
+    :param y0:
+    :param x1:
+    :param y1:
+    :return: coefA = -(y1 - y0) / (x1 - x0)
+    
+    http://en.wikipedia.org/wiki/Linear_equation
+    General (or standard) form
+
+    In the general (or standard[1]) form the linear equation is written as:
+
+    coefAx + coefBy = coefC, \,
+
+    where A and B are not both equal to zero. The equation is usually written 
+    so that A >= 0, by convention. The graph of the equation is a straight line,
+    and every straight line can be represented by an equation in the above 
+    form. If A is nonzero, then the x-intercept, that is, the x-coordinate of 
+    the point where the graph crosses the x-axis (where, y is zero), is C/A. 
+    If B is nonzero, then the y-intercept, that is the y-coordinate of the 
+    point where the graph crosses the y-axis (where x is zero), is C/B, and 
+    the slope of the line is -A/B. The general form is sometimes written as:
+    ax + by + c = 0
+
+    where a and b are not both equal to zero. The two versions can be 
+    converted from one to the other by moving the constant term to the other 
+    side of the equal sign.
+
+    """
     return -(y1 - y0) / (x1 - x0)
 
 
 def coefC(x0, y0, x1, y1):
+    """
+    Finds the coefficient C of the line going thorugh the two points P0 (x0,y0),
+    P1 (x1,y1). Run dektakTest.py for a simple example
+    :param x0: 
+    :param y0:
+    :param x1:
+    :param y1:
+    :return: coefC = -(x1 * y0 - x0 * y1) / (x1 - x0)
+    """
     return (x1 * y0 - x0 * y1) / (x1 - x0)
 
 
 def FindThresholdLine(x, y, threshold):
-
+    """
+    Finds the intersection points for a given x, y data that lie on a threshold
+    line. This is a kind of interlopation of the x data as the threshold is
+    given for the y axis.
+    :param x:
+    :param y:
+    :param threshold:
+    :return: incIntersectionPoints, decIntersectionPoints
+    """
+    
     increasingPoints = []
     incLineEquationCoefficients = []
     incIntersectionPoints = []
@@ -115,7 +163,6 @@ def FindThresholdLine(x, y, threshold):
     decreasingPoints = []
     decIntersectionPoints = []
 
-    thresholdLineArray = np.array([0, 1, threshold])
     for i in xrange(0, len(y)):
         if i < (len(y) - 1):
             if y[i] < threshold and y[i + 1] > threshold:  # incerasing
@@ -127,10 +174,9 @@ def FindThresholdLine(x, y, threshold):
                 coefAinc = coefA(x0, y0, x1, y1)
                 coefCinc = coefC(x0, y0, x1, y1)
                 incPointsCrossingThreshold = np.array([x0, y0, x1, y1])
-                lineEquationCooficientsCrossongThr = np.array([coefAinc, 1, coefCinc])
+                lineEquationCoefficientsCrossongThr = np.array([coefAinc, 1, coefCinc])
                 increasingPoints.append(incPointsCrossingThreshold)
-                incLineEquationCoefficients.append(lineEquationCooficientsCrossongThr)
-
+                incLineEquationCoefficients.append(lineEquationCoefficientsCrossongThr)
             else:
                 if y[i] > threshold and y[i + 1] < threshold:  # decreasing
                     #print "Decreasing line detected"
@@ -141,35 +187,70 @@ def FindThresholdLine(x, y, threshold):
                     coefAdec = coefA(x0, y0, x1, y1)
                     coefCdec = coefC(x0, y0, x1, y1)
                     decPointsCrossingThreshold = np.array([x0, y0, x1, y1])
-                    lineEquationCooficientsCrossongThrDec = np.array([coefAdec, 1, coefCdec])
+                    lineEquationCoefficientsCrossongThrDec = np.array([coefAdec, 1, coefCdec])
                     decreasingPoints.append(decPointsCrossingThreshold)
-                    decLineEquationCoefficients.append(lineEquationCooficientsCrossongThrDec)
+                    decLineEquationCoefficients.append(lineEquationCoefficientsCrossongThrDec)
                     #else:
                     #print "Neither dereasing nor incereasing line"
-
+                    
         else:
             break
 
-    A2 = thresholdLineArray[0]
+    thresholdLineArray = np.array([0, 1, threshold])    # coefA=0, coefB=1
+                                                        # coefC=threshold
+    A2 = thresholdLineArray[0]  # threshold line coeficients
     B2 = thresholdLineArray[1]
     C2 = thresholdLineArray[2]
 
-    for i in xrange(0, incLineEquationCoefficients.__len__()):
-        A1 = incLineEquationCoefficients[i][0]
-        B1 = incLineEquationCoefficients[i][1]
-        C1 = incLineEquationCoefficients[i][2]
+    """
+    The intersection points may be calculated when both line equations are
+    known (line coefficients). This is done separately for increasing line:
+    incA1, incB1, incC1 coeficients 
+    and decreasing line coefficients:
+    decA1, decB1, decC1 
+    Threshold line coefficients:
+    A2, B2, C2
+    
+    The intersection points are calculated by means of determinant and
+    linear system of equations:
+    http://en.wikipedia.org/wiki/Determinant
+    http://en.wikipedia.org/wiki/System_of_linear_equations
+    http://www.cliffsnotes.com/math/algebra/algebra-ii/linear-sentences-in-two-
+    variables/linear-equations-solutions-using-determinants-with-two-variables
+    
+    W=|A1B1
+       A2B2|=A1*B2-A2*B1
+    Wx=|-C1B1
+        -C2B2|=(-C1)*B2-(-C2)*B1   #determinant [[5, 0], [6, 1]]
+    Wy=|A1-C1
+        A2-C2|=A1*(-C2)-A2*(-C1)   #determinant [[4, 5], [1, 6]]
 
-        detW = float(A1 * B2 - A2 * B1)
-        detWx = float((C1) * B2 - (C2) * B1)
-        detWy = float(A1 * (C2) - A2 * (C1))
+    Ax+By+C=0
+    A=(y_1-y_0)/(x_1-x_0)
+    B=1 always
+    C=(x_1*y_0-x_0*y_1)/(x_1-x_0)
+    
+    Geometric interpretation
+
+    For a system involving two variables (x and y), each linear equation 
+    determines a line on the xy-plane. Because a solution to a linear system 
+    must satisfy all of the equations, the solution set is the intersection 
+    of these lines, and is hence either a line, a single point, 
+    or the empty set. We are satisfied with single point solution.
+    """
+    
+    for i in xrange(0, incLineEquationCoefficients.__len__()):
+        incA1 = incLineEquationCoefficients[i][0]
+        incB1 = incLineEquationCoefficients[i][1]
+        incC1 = incLineEquationCoefficients[i][2]
+
+        detW = float(incA1 * B2 - A2 * incB1)
+        detWx = float((incC1) * B2 - (C2) * incB1)
+        detWy = float(incA1 * (C2) - A2 * (incC1))
         pointX = float(detWx / detW)
         pointY = float(detWy / detW)
         incIntersectionPoints.append(np.array([pointX, pointY]))
-        # plt.plot(xDiff[i+start],incIntersectionPoints[i][1],'go')
-
-
-        #plt.plot(incIntersectionPoints[i][0],incIntersectionPoints[i][1],'go')
-
+        
     for i in xrange(0, decLineEquationCoefficients.__len__()):
         decA1 = decLineEquationCoefficients[i][0]
         decB1 = decLineEquationCoefficients[i][1]
@@ -181,12 +262,6 @@ def FindThresholdLine(x, y, threshold):
         decpointX = float(decdetWx / decdetW)
         decpointY = float(decdetWy / decdetW)
         decIntersectionPoints.append(np.array([decpointX, decpointY]))
-        # plt.plot(xDiff[i+start],decIntersectionPoints[i][1],'ro')
-        #plt.plot(decIntersectionPoints[i][0]+x[start]/2,decIntersectionPoints[i][1],'ro')
-
-        #plt.plot(decIntersectionPoints[i][0],decIntersectionPoints[i][1],'ro')
-
-
 
     return incIntersectionPoints, decIntersectionPoints
 
@@ -228,8 +303,8 @@ def load_data(file_name, file_path):
 
 def surface_tilt_levelling(x, y):
     """
-    Performs polynomial fit to the tilted profile and returns the difference between raw data and the fitted
-    curve what levels (straightens) the profile
+    Performs polynomial fit to the tilted profile and returns the difference 
+    between raw data and the fitted curve what levels (straightens) the profile
     :param x: raw data
     :param y: raw data
     :return: yLevelled levelled profile
@@ -533,185 +608,235 @@ Translate the points found in Diff data to the xy data for plotting the top and 
 
     return None
 
-def main():
+def calculate_start_slice(x_axis, start_slice): 
+    # calculates the position of the start slice in um.This is used to
+    # translate the position of the points from slices to the whole plot
+    start_slice_list.append(x_axis[start_slice])
+    return start_slice_list
+    
 
-    #######################################################################################################################
-    #######################################################################################################################
+#######################################################################################################################
+#######################################################################################################################
+# parameters to set
 
-    file_name = 't10_1_1_normal.csv'
+file_name = 't10_1_1_normal.csv'
+file_path = '/home/kolan/mycode/python/dektak/data/'
+moving_average_size = 277
+first_harmonics_to_keep = 1500
+find_peak_threshold = 0.065            # reliable results between 0.05 and 0.09
 
-    file_path = '/home/kolan/mycode/python/dektak/data/'
+#
+x, y = load_data(file_name, file_path)
 
-    x, y = load_data(file_name, file_path)
+yLevelled = surface_tilt_levelling(x, y)
 
-    yLevelled = surface_tilt_levelling(x, y)
+yLevelMovingAverage = moving_average(x, yLevelled, moving_average_size)
 
-    yLevelMovingAverage = moving_average(x, yLevelled, 277)
+averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
 
-    averageStructuresHeight, maxHarmonic = amplitude_and_phase_FFT(yLevelMovingAverage)
+xDiff, yDiff = first_order_difference(x, yLevelMovingAverage)
 
-    xDiff, yDiff = first_order_difference(x, yLevelMovingAverage)
+yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, first_harmonics_to_keep)
 
-    yCalculatedIFFTFiltered = FFT_filtering(xDiff, yDiff, 1500)
+maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, find_peak_threshold, maxHarmonic)
 
-    maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, 0.065, maxHarmonic)
+##############################################################################
+## Slicing
 
-    ##############################################################################
-    ##Slicing
-    increaseSliceLength = 200 # this is in index
+increaseSliceLength = 200           # this is in index
+thresholdLengthStep = 0.002
+thresholdStep = 0.001
 
-    widthTop = []
-    widthBottom = []
-    stdWidthTop = []
-    stdWidthBottom = []
-    spaceTop = []
-    spaceBottom = []
 
-    fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
-    fig.subplots_adjust(hspace=.5, wspace=.2)
-    axs = axs.ravel()
-    plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
+widthTop = []
+widthBottom = []
+stdWidthTop = []
+stdWidthBottom = []
+spaceTop = []
+spaceBottom = []
+start_slice_list = []
+adecNegativeLastList = []
+aincNegativeLastList = []
+adecPositveLastList = []
+aincPositveLastList = []
+yAdecNegativeLastList = []
+yAincNegativeLastList = []
+yAdecPositveLastList = []
+yAincPositveLastList = []
+xlineListTop = []
+xlineListBottom = []
+ylineListTop = []
+ylineListBottom = []
 
-    thresholdLengthStep = 0.002
+fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
+fig.subplots_adjust(hspace=.5, wspace=.2)
+axs = axs.ravel()
+plt.suptitle('Sliced structures: x Lateral [um], y Raw Micrometer [um]')
 
+signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
+xIFFT = signalIFFT[:, 0]    #keeps the xDiff, yCalculatedIFFTFiltered results in one np.array
+yIFFT = signalIFFT[:, 1]
+
+
+for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
+    for sliceNumber in range(maxHarmonic):
+
+       indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
+       indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+
+       start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+       stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+       xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
+
+       aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
+                                                                           thresholdLength, maxtab, sliceNumber)
+       aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
+                                                                             thresholdStep, thresholdLength, mintab,
+                                                                             sliceNumber)
+
+       abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+       atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+
+       widthBottom.append(abottom)
+       widthTop.append(atop)
+
+       translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+                             aincNegativeLast, yLevelled, axs)
+                        
+        
+    npWidthTop = np.array(widthTop)
+    npWidthBottom = np.array(widthBottom)
+
+    print 'Mean top width: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+    print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+
+    stdWidthTop.append(np.std(npWidthTop))
+    stdWidthBottom.append(np.std(npWidthBottom))
+
+    if np.std(npWidthTop) > 4 or np.std(npWidthBottom) > 4:
+        break
+
+print stdWidthTop
+print stdWidthBottom
+
+
+npStdWidthTop = np.array(stdWidthTop)
+npStdWidthBottom = np.array(stdWidthBottom)
+
+plt.figure('Std+std')
+plt.plot(npStdWidthTop + npStdWidthBottom)
+
+sumWidth = npStdWidthTop + npStdWidthBottom
+minThresholdLength = np.where(sumWidth == sumWidth.min())[0][0] * thresholdLengthStep
+
+print 'Min threshold length', minThresholdLength
+
+widthTop = []
+widthBottom = []
+stdWidthTop = []
+stdWidthBottom = []
+
+fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
+fig.subplots_adjust(hspace=.5, wspace=.2)
+axs = axs.ravel()
+plt.suptitle('Sliced structures last: x Lateral [um], y Raw Micrometer [um]')
+
+
+##############################################################################
+# The last run with the minThresholdLength found by the scanning above
+
+for sliceNumber in range(maxHarmonic):
+
+    indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
+    indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
+
+    start = indexOfMaxOccurrence[0][0] - increaseSliceLength
+    stop = indexOfMinOccurrence[0][0] + increaseSliceLength
+    
+    start_slice_list = calculate_start_slice(x, start)
+    
     thresholdStep = 0.001
     signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
     xIFFT = signalIFFT[:, 0]
     yIFFT = signalIFFT[:, 1]
 
-    '''
-    for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
-        for sliceNumber in range(maxHarmonic):
+    xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
 
-            indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
-            indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
-
-            start = indexOfMaxOccurrence[0][0] - increaseSliceLength
-            stop = indexOfMinOccurrence[0][0] + increaseSliceLength
-            xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-            aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
-                                                                           thresholdLength, maxtab, sliceNumber)
-            aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
-                                                                             thresholdStep, thresholdLength, mintab,
-                                                                             sliceNumber)
-
-            abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-            atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
-
-            widthBottom.append(abottom)
-            widthTop.append(atop)
-
-            translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
-                             aincNegativeLast, yLevelled, axs)
-
-
-        npWidthTop = np.array(widthTop)
-        npWidthBottom = np.array(widthBottom)
-
-        print 'Mean top width: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-        print 'Mean bottom width: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
-
-        stdWidthTop.append(np.std(npWidthTop))
-        stdWidthBottom.append(np.std(npWidthBottom))
-
-        if np.std(npWidthTop) > 4 or np.std(npWidthBottom) > 4:
-            break
-
-    print stdWidthTop
-    print stdWidthBottom
-
-    #plt.figure('Std')
-    #plt.plot(stdWidthTop)
-    #plt.plot(stdWidthBottom)
-
-    npStdWidthTop = np.array(stdWidthTop)
-    npStdWidthBottom = np.array(stdWidthBottom)
-
-    plt.figure('Std+std')
-    plt.plot(npStdWidthTop + npStdWidthBottom)
-
-    sumWidth = npStdWidthTop + npStdWidthBottom
-    minThresholdLength = np.where(sumWidth == sumWidth.min())[0][0] * thresholdLengthStep
-
-    print 'Min threshold length', minThresholdLength
-
-    widthTop = []
-    widthBottom = []
-    stdWidthTop = []
-    stdWidthBottom = []
-
-    fig, axs = plt.subplots(5, 4, figsize=(15, 6), facecolor='w', edgecolor='k')
-    fig.subplots_adjust(hspace=.5, wspace=.2)
-    axs = axs.ravel()
-    plt.suptitle('Sliced structures last: x Lateral [um], y Raw Micrometer [um]')
-    '''
-    minThresholdLength = 0
-
-    for sliceNumber in range(maxHarmonic):
-
-        indexOfMaxOccurrence = np.where(x > maxtab[sliceNumber][0])
-        indexOfMinOccurrence = np.where(x > mintab[sliceNumber][0])
-
-        start = indexOfMaxOccurrence[0][0] - increaseSliceLength
-        stop = indexOfMinOccurrence[0][0] + increaseSliceLength
-
-        thresholdStep = 0.001
-        signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
-        xIFFT = signalIFFT[:, 0]
-        yIFFT = signalIFFT[:, 1]
-
-        xShiftedToZero = xIFFT[start:stop] - xIFFT[start:stop][0]
-
-        aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
+    aincPositveLast, adecPositveLast = scanning_threshold_positive(xShiftedToZero, yIFFT[start:stop], thresholdStep,
                                                                            minThresholdLength, maxtab, sliceNumber)
-        aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
+    aincNegativeLast, adecNegativeLast = scanning_threshold_negative(xShiftedToZero, yIFFT[start:stop],
                                                                              thresholdStep, minThresholdLength, mintab,
                                                                              sliceNumber)
 
-        abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
-        atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
+    abottom = aincNegativeLast[0][0] - aincPositveLast[0][0]
+    atop = adecNegativeLast[0][0] - adecPositveLast[0][0]
 
         #need to save the current and next peak
         #this is done in the list
         #after each odd sliceNumber the list need to be reset
-        spaceTop.append(adecNegativeLast[0][0])
-        spaceBottom.append(aincNegativeLast[0][0])
 
-        spaceTopCurrent = adecNegativeLast[0][0]
-        spaceBottomCurrent = aincNegativeLast[0][0]
+    adecNegativeLastList.append(adecNegativeLast[0][0] + start_slice_list[sliceNumber])
+    aincNegativeLastList.append(aincNegativeLast[0][0] + start_slice_list[sliceNumber])
+    adecPositveLastList.append(adecPositveLast[0][0] + start_slice_list[sliceNumber])
+    aincPositveLastList.append(aincPositveLast[0][0] + start_slice_list[sliceNumber])
+    
+    yAdecNegativeLastList.append(yLevelled[np.where(x > adecNegativeLastList[sliceNumber])[0][0]])
+    yAincNegativeLastList.append(yLevelled[np.where(x > aincNegativeLastList[sliceNumber])[0][0]])
+    yAdecPositveLastList.append(yLevelled[np.where(x > adecPositveLastList[sliceNumber])[0][0]])
+    yAincPositveLastList.append(yLevelled[np.where(x > aincPositveLastList[sliceNumber])[0][0]])
 
+    widthBottom.append(abottom)
+    widthTop.append(atop)
 
-        if sliceNumber & 1:         # checks if the sliceNumber is odd
-            spaceTopNext = adecPositveLast[0][0]
-            spaceBottomNext = aincPositveLast[0][0]
-            spaceTop.append(spaceTopNext - spaceTopCurrent)
-            spaceBottom.append(spaceBottomNext - spaceBottomCurrent)
-
-
-
-
-        widthBottom.append(abottom)
-        widthTop.append(atop)
-
-        translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
+    translate_points(sliceNumber, x, start, stop, adecPositveLast, adecNegativeLast, aincPositveLast,
                              aincNegativeLast, yLevelled, axs)
                              
+for i in range(maxHarmonic-1):
+    # appends the spaceTop and spaceBottom
+    spaceTop.append(aincPositveLastList[i+1]-aincNegativeLastList[i])
+    spaceBottom.append(adecPositveLastList[i+1]-adecNegativeLastList[i])
+    
+for i in range(maxHarmonic):
+    # appends the lines for the Full raw data with points plot
+    xlineListTop.append(adecPositveLastList[i])
+    xlineListTop.append(adecNegativeLastList[i])
+    xlineListBottom.append(aincPositveLastList[i])
+    xlineListBottom.append(aincNegativeLastList[i])
+    
+    ylineListTop.append(yAdecPositveLastList[i])
+    ylineListTop.append(yAdecNegativeLastList[i])
+    ylineListBottom.append(yAincPositveLastList[i])
+    ylineListBottom.append(yAincNegativeLastList[i])
     
 
-    npWidthTop = np.array(widthTop)
-    npWidthBottom = np.array(widthBottom)
+npWidthTop = np.array(widthTop)
+npWidthBottom = np.array(widthBottom)
+npSpaceTop = np.array(spaceTop)
+npSpaceBottom = np.array(spaceBottom)
 
-    print 'Mean top width with threshold length: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
-    print 'Mean bottom width with threshold length: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
+print 'Mean top width with threshold length: ', np.mean(npWidthTop), '+/-', np.std(npWidthTop), 'um'
+print 'Mean bottom width with threshold length: ', np.mean(npWidthBottom), '+/-', np.std(npWidthBottom), 'um'
 
-    print 'Space top:', spaceTop
-    print 'Space bottom:', spaceBottom
+print 'Mean space top width with threshold length: ', np.mean(npSpaceTop), '+/-', np.std(npSpaceTop), 'um'
+print 'Mean space bottom width with threshold length: ', np.mean(npSpaceBottom), '+/-', np.std(npSpaceBottom), 'um'
 
-    stdWidthTop.append(np.std(npWidthTop))
-    stdWidthBottom.append(np.std(npWidthBottom))
+stdWidthTop.append(np.std(npWidthTop))
+stdWidthBottom.append(np.std(npWidthBottom))
 
-    plt.show()
+plt.figure('Full raw data with points')
+plt.plot(x, yLevelled, 'g')
+plt.plot(adecNegativeLastList, yAdecNegativeLastList, 'bo')
+plt.plot(aincNegativeLastList, yAincNegativeLastList, 'ro')
+plt.plot(adecPositveLastList, yAdecPositveLastList, 'bo')
+plt.plot(aincPositveLastList, yAincPositveLastList, 'ro')
 
-if __name__ == "__main__":
-    main()
+plt.plot(xlineListTop, ylineListTop)
+plt.plot(xlineListBottom, ylineListBottom)
+
+#plt.title('Full raw data')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.legend()
+#plt.grid(True)
+
+plt.show()
