@@ -833,10 +833,4 @@ plt.plot(aincPositveLastList, yAincPositveLastList, 'ro')
 plt.plot(xlineListTop, ylineListTop)
 plt.plot(xlineListBottom, ylineListBottom)
 
-#plt.title('Full raw data')
-#plt.xlabel('Lateral [um]')
-#plt.ylabel('Raw Micrometer [um]')
-#plt.legend()
-#plt.grid(True)
-
 plt.show()
