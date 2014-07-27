@@ -644,6 +644,8 @@ maxtab, mintab = find_minima_and_maxima(xDiff, yCalculatedIFFTFiltered, find_pea
 ## Slicing
 
 increaseSliceLength = 200           # this is in index
+thresholdLengthStep = 0.002
+thresholdStep = 0.001
 
 
 widthTop = []
@@ -675,8 +677,6 @@ signalIFFT = np.column_stack((xDiff, yCalculatedIFFTFiltered))
 xIFFT = signalIFFT[:, 0]    #keeps the xDiff, yCalculatedIFFTFiltered results in one np.array
 yIFFT = signalIFFT[:, 1]
 
-thresholdLengthStep = 0.002
-thresholdStep = 0.001
 
 for thresholdLength in (np.arange(0.0, 0.04, thresholdLengthStep)):
     for sliceNumber in range(maxHarmonic):
@@ -833,10 +833,10 @@ plt.plot(aincPositveLastList, yAincPositveLastList, 'ro')
 plt.plot(xlineListTop, ylineListTop)
 plt.plot(xlineListBottom, ylineListBottom)
 
-plt.title('Full raw data')
-plt.xlabel('Lateral [um]')
-plt.ylabel('Raw Micrometer [um]')
-plt.legend()
-plt.grid(True)
+#plt.title('Full raw data')
+#plt.xlabel('Lateral [um]')
+#plt.ylabel('Raw Micrometer [um]')
+#plt.legend()
+#plt.grid(True)
 
 plt.show()
