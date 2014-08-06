@@ -832,5 +832,6 @@ plt.plot(aincPositveLastList, yAincPositveLastList, 'ro')
 
 plt.plot(xlineListTop, ylineListTop)
 plt.plot(xlineListBottom, ylineListBottom)
+plt.grid(True)
 
 plt.show()
